@@ -7,54 +7,26 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 :root {
-  --color-background-primary: #ffffff;
-  --color-background-secondary: #f5f5f4;
-  --color-background-tertiary: #eeece8;
-  --color-background-info: #e6f1fb;
-  --color-background-success: #eaf3de;
-  --color-background-warning: #faeeda;
-  --color-background-danger: #fcebeb;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #666660;
-  --color-text-tertiary: #999994;
-  --color-text-info: #0c447c;
-  --color-text-success: #27500a;
-  --color-text-warning: #633806;
-  --color-text-danger: #791f1f;
-  --color-border-tertiary: rgba(0,0,0,0.1);
-  --color-border-secondary: rgba(0,0,0,0.2);
-  --color-border-primary: rgba(0,0,0,0.3);
-  --color-border-info: #378ADD;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'SF Mono', 'Consolas', monospace;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
+  --color-background-primary:#ffffff;--color-background-secondary:#f5f5f4;--color-background-tertiary:#eeece8;
+  --color-background-info:#e6f1fb;--color-background-success:#eaf3de;--color-background-warning:#faeeda;--color-background-danger:#fcebeb;
+  --color-text-primary:#1a1a1a;--color-text-secondary:#666660;--color-text-tertiary:#999994;
+  --color-text-info:#0c447c;--color-text-success:#27500a;--color-text-warning:#633806;--color-text-danger:#791f1f;
+  --color-border-tertiary:rgba(0,0,0,0.1);--color-border-secondary:rgba(0,0,0,0.2);--color-border-info:#378ADD;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'SF Mono','Consolas',monospace;
+  --border-radius-md:8px;--border-radius-lg:12px;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background-primary: #1e1e1c;
-    --color-background-secondary: #272724;
-    --color-background-tertiary: #2e2e2b;
-    --color-background-info: #042c53;
-    --color-background-success: #173404;
-    --color-background-warning: #412402;
-    --color-background-danger: #501313;
-    --color-text-primary: #e8e8e4;
-    --color-text-secondary: #a0a09a;
-    --color-text-tertiary: #666660;
-    --color-text-info: #85b7eb;
-    --color-text-success: #97c459;
-    --color-text-warning: #ef9f27;
-    --color-text-danger: #f09595;
-    --color-border-tertiary: rgba(255,255,255,0.1);
-    --color-border-secondary: rgba(255,255,255,0.2);
-    --color-border-primary: rgba(255,255,255,0.3);
-    --color-border-info: #378ADD;
+@media(prefers-color-scheme:dark){
+  :root{
+    --color-background-primary:#1e1e1c;--color-background-secondary:#272724;--color-background-tertiary:#2e2e2b;
+    --color-background-info:#042c53;--color-background-success:#173404;--color-background-warning:#412402;--color-background-danger:#501313;
+    --color-text-primary:#e8e8e4;--color-text-secondary:#a0a09a;--color-text-tertiary:#666660;
+    --color-text-info:#85b7eb;--color-text-success:#97c459;--color-text-warning:#ef9f27;--color-text-danger:#f09595;
+    --color-border-tertiary:rgba(255,255,255,0.1);--color-border-secondary:rgba(255,255,255,0.2);
   }
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);height:100vh;overflow:hidden}
-.app{display:flex;flex-direction:column;height:100vh;background:var(--color-background-tertiary)}
+.app{display:flex;flex-direction:column;height:100vh}
 .topbar{height:52px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
 .topbar-title{font-size:15px;font-weight:500}
 .topbar-sub{font-size:12px;color:var(--color-text-tertiary)}
@@ -72,21 +44,23 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .jd-item.active .jd-meta{color:var(--color-text-info);opacity:.7}
 .jd-name{font-size:13px;font-weight:500;line-height:1.4;color:var(--color-text-primary)}
 .jd-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
-.center{flex:1;display:flex;overflow:hidden;position:relative}
+.center{flex:1;display:flex;overflow:hidden}
 .list-panel{width:270px;flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
 .list-head{padding:13px 14px 10px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
 .list-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .list-title{font-size:13px;font-weight:500}
 .list-meta{font-size:11px;color:var(--color-text-secondary)}
-.jd-btn{font-size:12px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);white-space:nowrap;margin-top:8px;width:100%;justify-content:space-between}
+.jd-btn{font-size:12px;padding:5px 8px 5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);white-space:nowrap;margin-top:8px;width:100%;justify-content:space-between}
 .jd-btn:hover{background:var(--color-background-secondary)}
 .jd-btn .left{display:flex;align-items:center;gap:5px}
+.jd-btn-arrow{font-size:15px;transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.jd-btn-arrow.open{transform:rotate(180deg)}
 .sort-row{display:flex;align-items:center;gap:6px;padding:7px 14px;flex-shrink:0}
 .sort-lbl{font-size:11px;color:var(--color-text-tertiary)}
 .sort-btn{font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);border:0.5px solid transparent;background:transparent;color:var(--color-text-secondary);cursor:pointer}
 .sort-btn.on{background:var(--color-background-primary);border-color:var(--color-border-secondary);color:var(--color-text-primary)}
 .clist{flex:1;overflow-y:auto;padding:6px 8px}
-.ccard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 10px;margin-bottom:6px;cursor:pointer;display:flex;gap:9px;transition:border-color .1s}
+.ccard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px;margin-bottom:6px;cursor:pointer;display:flex;gap:9px;transition:border-color .1s}
 .ccard:hover{border-color:var(--color-border-secondary)}
 .ccard.sel{border-color:var(--color-border-info);border-width:1.5px}
 .av{width:34px;height:34px;border-radius:50%;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--color-text-info);flex-shrink:0}
@@ -98,6 +72,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .minibar-row{display:flex;gap:3px;margin-top:5px}
 .minibar{flex:1;height:2px;border-radius:1px;background:var(--color-border-tertiary);overflow:hidden}
 .minibar-fill{height:100%;border-radius:1px}
+.right-area{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
 .detail{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--color-background-primary)}
 .detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--color-text-tertiary);gap:10px}
 .detail-empty i{font-size:32px}
@@ -129,11 +104,10 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .btn-xs{font-size:12px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary)}
 .btn-xs:hover{background:var(--color-background-secondary)}
 .btn-xs.pri{background:var(--color-background-info);border-color:transparent;color:var(--color-text-info)}
-.btn-xs.pri:hover{opacity:.85}
-.jd-drawer{position:absolute;top:0;left:0;bottom:0;width:100%;background:var(--color-background-primary);display:flex;flex-direction:column;z-index:10;transform:translateY(100%);transition:transform .22s cubic-bezier(.4,0,.2,1)}
-.jd-drawer.open{transform:translateY(0)}
+.jd-drawer{position:absolute;top:0;right:0;bottom:0;width:100%;background:var(--color-background-primary);border-left:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;z-index:10;transform:translateX(100%);transition:transform .24s cubic-bezier(.4,0,.2,1)}
+.jd-drawer.open{transform:translateX(0)}
 .drawer-head{padding:13px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.drawer-title{font-size:13px;font-weight:500}
+.drawer-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 40px)}
 .drawer-close{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:5px;display:flex;align-items:center;border-radius:5px}
 .drawer-close:hover{background:var(--color-background-secondary)}
 .drawer-tabs{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
@@ -163,9 +137,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
     <aside class="sidebar">
       <div class="sidebar-head">
         <span>岗位列表</span>
-        <button class="sidebar-addbtn">
-          <i class="ti ti-plus" style="font-size:11px"></i>JD
-        </button>
+        <button class="sidebar-addbtn"><i class="ti ti-plus" style="font-size:11px"></i>JD</button>
       </div>
       <div class="sidebar-list" id="jd-list"></div>
     </aside>
@@ -176,9 +148,9 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
             <span class="list-title" id="lp-title">—</span>
             <span id="lp-meta" class="list-meta"></span>
           </div>
-          <button class="jd-btn" id="jd-detail-btn" onclick="toggleDrawer()">
+          <button class="jd-btn" onclick="toggleDrawer()">
             <span class="left"><i class="ti ti-file-description" style="font-size:13px"></i>查看岗位要求</span>
-            <i class="ti ti-chevron-down" id="jd-btn-chevron" style="font-size:13px;transition:transform .2s"></i>
+            <i class="ti ti-arrow-right jd-btn-arrow" id="jd-btn-arrow"></i>
           </button>
         </div>
         <div class="sort-row">
@@ -188,68 +160,37 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
         </div>
         <div class="clist" id="clist"></div>
       </div>
-      <div class="detail" id="detail-panel">
-        <div class="detail-empty">
-          <i class="ti ti-user"></i>
-          <p>点击候选人查看详情</p>
+      <div class="right-area">
+        <div class="detail" id="detail-panel">
+          <div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>
         </div>
-      </div>
-      <div class="jd-drawer" id="jd-drawer">
-        <div class="drawer-head">
-          <span class="drawer-title" id="drawer-title">岗位要求</span>
-          <button class="drawer-close" onclick="toggleDrawer()"><i class="ti ti-x" style="font-size:16px"></i></button>
+        <div class="jd-drawer" id="jd-drawer">
+          <div class="drawer-head">
+            <span class="drawer-title" id="drawer-title">岗位要求</span>
+            <button class="drawer-close" onclick="toggleDrawer()"><i class="ti ti-x" style="font-size:16px"></i></button>
+          </div>
+          <div class="drawer-tabs">
+            <button class="dtab on" id="tab-raw" onclick="switchTab('raw')">客户原话</button>
+            <button class="dtab" id="tab-analysis" onclick="switchTab('analysis')">深度分析</button>
+          </div>
+          <div class="drawer-body" id="drawer-body"></div>
         </div>
-        <div class="drawer-tabs">
-          <button class="dtab on" id="tab-raw" onclick="switchTab('raw')">客户原话</button>
-          <button class="dtab" id="tab-analysis" onclick="switchTab('analysis')">深度分析</button>
-        </div>
-        <div class="drawer-body" id="drawer-body"></div>
       </div>
     </div>
   </div>
 </div>
 <script>
-const JDS=[
-  {id:'j1',name:'高级光学设计工程师',co:'珠海·Oplink',count:4,avg:78},
-  {id:'j2',name:'视觉算法工程师（工业AI）',co:'广州·公司5',count:4,avg:72},
-  {id:'j3',name:'自动化总监',co:'珠海·Molex',count:3,avg:65},
-];
-const JD_RAW={
-  j1:`岗位名称：高级光学工程师\n公司：珠海光联通讯技术有限公司（Oplink）\n地点：珠海保税区\n薪资：面议\n\n岗位职责：\n1. 负责WDM、光开关、环形器等无源光器件的光学设计与规格制定\n2. 开展光学仿真分析，解决产品研发过程中的光学问题\n3. 与工艺、测试团队协作，推动产品从设计到量产\n4. 在较少监督下独立完成工作，必要时支持出差/驻场\n\n任职要求：\n- 本科及以上，光学/物理或相关专业，硕士优先\n- 本科5年以上或硕士3年以上光学设计经验\n- 熟练使用光学设计软件（Zemax等）\n- 熟悉光纤、透镜、滤波器等光学元器件\n- 具备优秀的英文读写能力\n- 有光器件/光模块产品经验者优先`,
-  j2:`岗位名称：视觉算法工程师\n公司：某工业AI公司（广州）\n地点：广州\n\n岗位职责：\n1. 负责工业场景下3D视觉算法开发，包括点云处理、目标检测与位姿估计\n2. 针对汽车制造等场景开发机器人抓取、装配引导算法\n3. 与机器人工程师协作完成系统集成与现场调试\n\n任职要求：\n- 计算机视觉/机器人/自动化相关专业，5年以上经验\n- 熟悉PCL、Open3D等点云处理库\n- 有3D目标检测、点云配准（ICP等）实战经验\n- 熟练使用C++/Python，了解ROS优先\n- 有汽车/3C行业工厂部署经验优先`,
-  j3:`岗位名称：自动化总监\n公司：莫仕连接器（Molex）珠海工厂\n地点：珠海保税区\n\n岗位职责：\n1. 制定并执行连接器/线缆产品生产的自动化战略路线图\n2. 领导工程团队推动冲压、注塑、电镀、组装工序自动化落地\n3. 与全球工程/运营团队协作，对接总部汇报\n4. 管理工装/夹具设计团队，推动标准化\n\n任职要求：\n- 本科/硕士，机械工程/自动化相关专业\n- 15年以上制造工程经验，8年以上自动化领导经验\n- 有连接器/线缆行业自动化经验（强制要求）\n- 熟悉PFMEA、DFM等工程工具\n- 英语流利，能独立对接外籍管理层`,
-};
-const JD_ANALYSIS={
-  j1:{hardReqs:['本科5年+ / 硕士3年+','光学/物理相关专业','Zemax仿真实战经验','WDM/环形器/光开关产品经历'],plusReqs:['硕士学历','光模块系统级经验','英文读写流利'],targetCos:['腾景科技','光迅科技','华工正源','博创科技','Lumentum','II-VI相干'],insight:`外资成熟平台（年销3亿美元），要求能独立挑担子的资深工程师，不培养新人。"在较少监督下独立完成"是文化核心——需要有自驱力和全流程交付能力的人。\n\n能被吸引的人：在国内小公司技术深度有限、希望在外资大平台稳定发展的资深光学工程师。`,warning:`注意：LED/照明方向的光学工程师技术基础差异大，需谨慎；纯仿真背景无实物落地经验者不建议推进。`,dims:[{n:'产品匹配',desc:'需有WDM、环形器、交织器等无源器件完整设计经历'},{n:'仿真工具',desc:'Zemax实战项目描述，而非仅列技能'},{n:'装配工艺',desc:'能否理解并输出装配规格'},{n:'独立交付',desc:'是否有在少监督下独立完成产品全流程的案例'}]},
-  j2:{hardReqs:['5年以上视觉算法经验','PCL/Open3D点云处理经历','3D目标检测/位姿估计实战','C++/Python熟练'],plusReqs:['ROS经验','汽车/3C行业工厂部署案例','gRPC/分布式系统经验'],targetCos:['梅卡曼德','海康机器人','节卡机器人','思灵机器人','奥比中光'],insight:`初创/成长期工业AI公司，客户是广汽丰田/比亚迪/特斯拉等头部车厂。核心诉求是能独立在工厂现场调试落地的工程师。\n\n工厂部署经历是最强加分项——会不会趴在产线上调参，比代码写得漂亮重要。`,warning:`注意：纯学术背景（博士/研究所）慎推，工业场景适应成本高；2D视觉为主者不建议。`,dims:[{n:'技术栈匹配',desc:'PCL/Open3D/ICP是否有具体项目支撑'},{n:'行业场景',desc:'是否有汽车/3C工厂实际部署经历'},{n:'工程落地',desc:'算法→接口→产线集成的完整交付能力'},{n:'机器人协作',desc:'是否有与机器人工程师联调经验'}]},
-  j3:{hardReqs:['15年以上制造工程经验','8年以上自动化领导经验','连接器/线缆行业背景（强制）','英语流利'],plusReqs:['外资背景','全球汇报经验','PFMEA/DFM工具应用'],targetCos:['TE Connectivity','安费诺','矢崎','住友电工','立讯精密（连接器事业部）'],insight:`全球顶级连接器公司（年销1100亿美元），要能接管珠海工厂自动化方向并对接全球总部的战略型高管。连接器行业背景是硬门槛。\n\n英语+连接器+自动化高管三合一人才极稀缺，可适当放宽年龄上限至50岁。`,warning:`注意：非连接器行业的自动化高管迁移难度大；英语弱者无论经验多深都不建议推进。`,dims:[{n:'行业精准度',desc:'连接器/线缆自动化经历的深度和年限'},{n:'战略高度',desc:'是否有自动化路线图制定、多工厂推广的管理经历'},{n:'英语能力',desc:'是否有外资团队汇报的实际经历'},{n:'团队管理',desc:'历史管理团队规模'}]},
-};
-const CANDS={
-  j1:[
-    {id:'c1',name:'刘**',age:34,title:'光学工程师',co:'腾景科技',yrs:9,score:88,addedAt:1,summary:'有WDM+环形器完整设计经历，Zemax仿真能力突出，装配工艺理解深入。综合匹配度高，建议优先推进。',dims:[{n:'产品匹配',s:92,c:'有WDM、环形器、交织器完整设计经历'},{n:'仿真工具',s:90,c:'Zemax+Matlab均有实战项目支撑'},{n:'装配工艺',s:85,c:'曾主导光器件装调工艺规范制定'},{n:'工作年限',s:80,c:'9年，符合要求'}],raw:`姓名：刘**   年龄：34岁   现居：珠海\n学历：华中科技大学 光电信息工程 本科（统招）\n\n【当前工作】\n腾景科技 · 高级光学工程师（2018.03–至今）\n- 负责WDM、环形器、交织器等无源光器件光学设计\n- 主导产品光学规格制定，输出Zemax仿真报告\n- 牵头解决良率问题，改善良率提升18%\n\n求职意向：光学工程师 · 30-40K · 珠海/武汉`},
-    {id:'c2',name:'陈**',age:31,title:'光学设计工程师',co:'光迅科技',yrs:6,score:74,addedAt:2,summary:'薄膜器件经验扎实，Zemax熟练，但缺少环形器方向经历。',dims:[{n:'产品匹配',s:75,c:'薄膜滤波器经验丰富，但无环形器设计记录'},{n:'仿真工具',s:82,c:'Zemax日常使用'},{n:'装配工艺',s:70,c:'有基础工艺认知'},{n:'工作年限',s:70,c:'6年'}],raw:`姓名：陈**   年龄：31岁   现居：武汉\n光迅科技 · 光学设计工程师 · 6年经验`},
-    {id:'c3',name:'王**',age:36,title:'光学工程师',co:'华工正源',yrs:11,score:69,addedAt:3,summary:'经验丰富，激光方向为主，向无源器件转型需适应期。',dims:[{n:'产品匹配',s:60,c:'以激光器光学设计为主'},{n:'仿真工具',s:78,c:'Zemax+Code V均有使用'},{n:'装配工艺',s:72,c:'有激光器装配经验'},{n:'工作年限',s:90,c:'11年'}],raw:`姓名：王**   年龄：36岁\n华工正源 · 高级光学工程师 · 11年经验`},
-    {id:'c4',name:'张**',age:28,title:'光学仿真工程师',co:'博创科技',yrs:5,score:61,addedAt:4,summary:'仿真能力强但缺乏产品落地和装配经验。',dims:[{n:'产品匹配',s:55,c:'缺少实物产品设计经历'},{n:'仿真工具',s:85,c:'Zemax专项能力强'},{n:'装配工艺',s:45,c:'无装配相关经验'},{n:'工作年限',s:60,c:'5年'}],raw:`姓名：张**   年龄：28岁\n博创科技 · 光学仿真工程师 · 5年经验`},
-  ],
-  j2:[
-    {id:'c5',name:'周**',age:32,title:'视觉算法工程师',co:'梅卡曼德',yrs:7,score:85,addedAt:1,summary:'点云+位姿估计核心经历，汽车工厂实际部署案例，高度匹配。',dims:[{n:'技术栈匹配',s:90,c:'PCL+Open3D+ICP完整栈'},{n:'行业场景',s:88,c:'广汽/比亚迪工厂部署经历'},{n:'工程落地',s:82,c:'完整交付案例'},{n:'机器人协作',s:75,c:'有ROS联调经验'}],raw:`姓名：周**   年龄：32岁\n梅卡曼德 · 视觉算法工程师 · 7年经验`},
-    {id:'c6',name:'吴**',age:29,title:'3D视觉算法',co:'海康机器人',yrs:5,score:77,addedAt:2,summary:'PCL+Open3D扎实，工业场景丰富。',dims:[{n:'技术栈匹配',s:82,c:''},{n:'行业场景',s:75,c:''},{n:'工程落地',s:74,c:''},{n:'机器人协作',s:68,c:''}],raw:`姓名：吴**   年龄：29岁\n海康机器人 · 3D视觉算法 · 5年经验`},
-    {id:'c7',name:'郑**',age:35,title:'计算机视觉工程师',co:'大华股份',yrs:10,score:63,addedAt:3,summary:'2D视觉为主，3D点云经验有限。',dims:[{n:'技术栈匹配',s:55,c:''},{n:'行业场景',s:70,c:''},{n:'工程落地',s:68,c:''},{n:'机器人协作',s:52,c:''}],raw:`姓名：郑**   年龄：35岁\n大华股份 · 计算机视觉 · 10年经验`},
-    {id:'c8',name:'赵**',age:27,title:'算法工程师',co:'速感科技',yrs:4,score:58,addedAt:4,summary:'SLAM相关经验，工业场景较少。',dims:[{n:'技术栈匹配',s:62,c:''},{n:'行业场景',s:50,c:''},{n:'工程落地',s:55,c:''},{n:'机器人协作',s:58,c:''}],raw:`姓名：赵**   年龄：27岁\n速感科技 · 算法工程师 · 4年经验`},
-  ],
-  j3:[
-    {id:'c9',name:'林**',age:44,title:'自动化工程总监',co:'TE Connectivity',yrs:18,score:82,addedAt:1,summary:'连接器行业18年，自动化改造丰富，英语流利，高度契合。',dims:[{n:'行业精准度',s:92,c:'连接器行业18年全覆盖'},{n:'战略高度',s:85,c:'主导3厂自动化路线图'},{n:'英语能力',s:78,c:'外资18年'},{n:'团队管理',s:80,c:'管理30+人'}],raw:`姓名：林**   年龄：44岁\nTE Connectivity · 自动化工程总监 · 18年经验`},
-    {id:'c10',name:'黄**',age:39,title:'自动化高级经理',co:'立讯精密',yrs:14,score:70,addedAt:2,summary:'精密连接器自动化经验充足，缺乏外资英语汇报经历。',dims:[{n:'行业精准度',s:80,c:''},{n:'战略高度',s:72,c:''},{n:'英语能力',s:52,c:'英语偏弱'},{n:'团队管理',s:75,c:''}],raw:`姓名：黄**   年龄：39岁\n立讯精密 · 自动化高级经理 · 14年经验`},
-    {id:'c11',name:'徐**',age:48,title:'制造工程总监',co:'安费诺',yrs:22,score:60,addedAt:3,summary:'资历深厚但年龄偏大，自动化专注度不足。',dims:[{n:'行业精准度',s:75,c:''},{n:'战略高度',s:80,c:''},{n:'英语能力',s:70,c:''},{n:'团队管理',s:82,c:''}],raw:`姓名：徐**   年龄：48岁\n安费诺 · 制造工程总监 · 22年经验`},
-  ],
-};
+const JDS=[{id:'j1',name:'高级光学设计工程师',co:'珠海·Oplink',count:4,avg:78},{id:'j2',name:'视觉算法工程师（工业AI）',co:'广州·公司5',count:4,avg:72},{id:'j3',name:'自动化总监',co:'珠海·Molex',count:3,avg:65}];
+const JD_RAW={j1:`岗位名称：高级光学工程师\n公司：珠海光联通讯技术有限公司（Oplink）\n地点：珠海保税区\n\n岗位职责：\n1. 负责WDM、光开关、环形器等无源光器件的光学设计与规格制定\n2. 开展光学仿真分析，解决产品研发过程中的光学问题\n3. 与工艺、测试团队协作，推动产品从设计到量产\n4. 在较少监督下独立完成工作\n\n任职要求：\n- 本科及以上，光学/物理或相关专业，硕士优先\n- 本科5年以上或硕士3年以上光学设计经验\n- 熟练使用Zemax等光学设计软件\n- 有光器件/光模块产品经验者优先`,j2:`岗位名称：视觉算法工程师\n公司：某工业AI公司（广州）\n\n岗位职责：\n1. 负责工业场景下3D视觉算法开发，包括点云处理、目标检测与位姿估计\n2. 针对汽车制造等场景开发机器人抓取、装配引导算法\n3. 与机器人工程师协作完成系统集成与现场调试\n\n任职要求：\n- 计算机视觉/机器人/自动化相关专业，5年以上经验\n- 熟悉PCL、Open3D等点云处理库\n- 有3D目标检测、点云配准（ICP等）实战经验\n- 熟练使用C++/Python，了解ROS优先`,j3:`岗位名称：自动化总监\n公司：莫仕连接器（Molex）珠海工厂\n\n岗位职责：\n1. 制定并执行连接器/线缆产品生产的自动化战略路线图\n2. 领导工程团队推动冲压、注塑、电镀、组装工序自动化落地\n3. 与全球工程/运营团队协作，对接总部汇报\n\n任职要求：\n- 15年以上制造工程经验，8年以上自动化领导经验\n- 有连接器/线缆行业自动化经验（强制要求）\n- 英语流利，能独立对接外籍管理层`};
+const JD_ANALYSIS={j1:{hardReqs:['本科5年+ / 硕士3年+','光学/物理相关专业','Zemax仿真实战经验','WDM/环形器/光开关产品经历'],plusReqs:['硕士学历','光模块系统级经验','英文读写流利'],targetCos:['腾景科技','光迅科技','华工正源','博创科技','Lumentum','II-VI相干'],insight:`外资成熟平台（年销3亿美元），要求能独立挑担子的资深工程师，不培养新人。"在较少监督下独立完成"是文化核心。\n\n能被吸引的人：在国内小公司技术深度有限、希望在外资大平台稳定发展的资深光学工程师。`,warning:`注意：LED/照明方向的光学工程师技术基础差异大，需谨慎；纯仿真背景无实物落地经验者不建议推进。`,dims:[{n:'产品匹配',desc:'需有WDM、环形器、交织器等无源器件完整设计经历'},{n:'仿真工具',desc:'Zemax实战项目描述，而非仅列技能'},{n:'装配工艺',desc:'能否理解并输出装配规格'},{n:'独立交付',desc:'是否有在少监督下独立完成产品全流程的案例'}]},j2:{hardReqs:['5年以上视觉算法经验','PCL/Open3D点云处理经历','3D目标检测/位姿估计实战','C++/Python熟练'],plusReqs:['ROS经验','汽车/3C行业工厂部署案例'],targetCos:['梅卡曼德','海康机器人','节卡机器人','思灵机器人'],insight:`核心诉求是能独立在工厂现场调试落地的工程师。\n\n工厂部署经历是最强加分项——会不会趴在产线上调参，比代码写得漂亮重要。`,warning:`注意：纯学术背景慎推；2D视觉为主者不建议。`,dims:[{n:'技术栈匹配',desc:'PCL/Open3D/ICP是否有具体项目支撑'},{n:'行业场景',desc:'是否有汽车/3C工厂实际部署经历'},{n:'工程落地',desc:'算法→接口→产线集成的完整交付能力'},{n:'机器人协作',desc:'是否有与机器人工程师联调经验'}]},j3:{hardReqs:['15年以上制造工程经验','8年以上自动化领导经验','连接器/线缆行业背景（强制）','英语流利'],plusReqs:['外资背景','全球汇报经验','PFMEA/DFM工具应用'],targetCos:['TE Connectivity','安费诺','矢崎','住友电工','立讯精密'],insight:`英语+连接器+自动化高管三合一人才极稀缺，可适当放宽年龄上限至50岁。`,warning:`注意：非连接器行业的自动化高管迁移难度大；英语弱者无论经验多深都不建议推进。`,dims:[{n:'行业精准度',desc:'连接器/线缆自动化经历的深度和年限'},{n:'战略高度',desc:'是否有自动化路线图制定、多工厂推广的管理经历'},{n:'英语能力',desc:'是否有外资团队汇报的实际经历'},{n:'团队管理',desc:'历史管理团队规模'}]}};
+const CANDS={j1:[{id:'c1',name:'刘**',age:34,title:'光学工程师',co:'腾景科技',yrs:9,score:88,addedAt:1,summary:'有WDM+环形器完整设计经历，Zemax仿真能力突出，装配工艺理解深入。综合匹配度高，建议优先推进。',dims:[{n:'产品匹配',s:92,c:'有WDM、环形器、交织器完整设计经历'},{n:'仿真工具',s:90,c:'Zemax+Matlab均有实战项目支撑'},{n:'装配工艺',s:85,c:'曾主导光器件装调工艺规范制定'},{n:'工作年限',s:80,c:'9年，符合要求'}],raw:`姓名：刘**   年龄：34岁   现居：珠海\n学历：华中科技大学 光电信息工程 本科\n\n腾景科技 · 高级光学工程师（2018–至今）\n- 负责WDM、环形器、交织器等无源光器件光学设计\n- 主导产品光学规格制定，输出Zemax仿真报告\n- 牵头解决良率问题，改善良率提升18%\n\n求职意向：光学工程师 · 30-40K · 珠海/武汉`},{id:'c2',name:'陈**',age:31,title:'光学设计工程师',co:'光迅科技',yrs:6,score:74,addedAt:2,summary:'薄膜器件经验扎实，Zemax熟练，但缺少环形器方向经历。',dims:[{n:'产品匹配',s:75,c:'薄膜滤波器经验丰富，但无环形器设计记录'},{n:'仿真工具',s:82,c:'Zemax日常使用'},{n:'装配工艺',s:70,c:'有基础工艺认知'},{n:'工作年限',s:70,c:'6年'}],raw:`姓名：陈**   年龄：31岁\n光迅科技 · 光学设计工程师 · 6年经验`},{id:'c3',name:'王**',age:36,title:'光学工程师',co:'华工正源',yrs:11,score:69,addedAt:3,summary:'经验丰富，激光方向为主，向无源器件转型需适应期。',dims:[{n:'产品匹配',s:60,c:'以激光器光学设计为主'},{n:'仿真工具',s:78,c:'Zemax+Code V均有使用'},{n:'装配工艺',s:72,c:'有激光器装配经验'},{n:'工作年限',s:90,c:'11年'}],raw:`姓名：王**   年龄：36岁\n华工正源 · 高级光学工程师 · 11年经验`},{id:'c4',name:'张**',age:28,title:'光学仿真工程师',co:'博创科技',yrs:5,score:61,addedAt:4,summary:'仿真能力强但缺乏产品落地和装配经验。',dims:[{n:'产品匹配',s:55,c:'缺少实物产品设计经历'},{n:'仿真工具',s:85,c:'Zemax专项能力强'},{n:'装配工艺',s:45,c:'无装配相关经验'},{n:'工作年限',s:60,c:'5年'}],raw:`姓名：张**   年龄：28岁\n博创科技 · 光学仿真工程师 · 5年经验`}],j2:[{id:'c5',name:'周**',age:32,title:'视觉算法工程师',co:'梅卡曼德',yrs:7,score:85,addedAt:1,summary:'点云+位姿估计核心经历，汽车工厂实际部署案例，高度匹配。',dims:[{n:'技术栈匹配',s:90,c:'PCL+Open3D+ICP完整栈'},{n:'行业场景',s:88,c:'广汽/比亚迪工厂部署经历'},{n:'工程落地',s:82,c:'完整交付案例'},{n:'机器人协作',s:75,c:'有ROS联调经验'}],raw:`姓名：周**   年龄：32岁\n梅卡曼德 · 视觉算法工程师 · 7年经验`},{id:'c6',name:'吴**',age:29,title:'3D视觉算法',co:'海康机器人',yrs:5,score:77,addedAt:2,summary:'PCL+Open3D扎实，工业场景丰富。',dims:[{n:'技术栈匹配',s:82,c:''},{n:'行业场景',s:75,c:''},{n:'工程落地',s:74,c:''},{n:'机器人协作',s:68,c:''}],raw:`姓名：吴**\n海康机器人 · 3D视觉算法 · 5年经验`},{id:'c7',name:'郑**',age:35,title:'计算机视觉工程师',co:'大华股份',yrs:10,score:63,addedAt:3,summary:'2D视觉为主，3D点云经验有限。',dims:[{n:'技术栈匹配',s:55,c:''},{n:'行业场景',s:70,c:''},{n:'工程落地',s:68,c:''},{n:'机器人协作',s:52,c:''}],raw:`姓名：郑**\n大华股份 · 计算机视觉 · 10年经验`},{id:'c8',name:'赵**',age:27,title:'算法工程师',co:'速感科技',yrs:4,score:58,addedAt:4,summary:'SLAM相关经验，工业场景较少。',dims:[{n:'技术栈匹配',s:62,c:''},{n:'行业场景',s:50,c:''},{n:'工程落地',s:55,c:''},{n:'机器人协作',s:58,c:''}],raw:`姓名：赵**\n速感科技 · 算法工程师 · 4年经验`}],j3:[{id:'c9',name:'林**',age:44,title:'自动化工程总监',co:'TE Connectivity',yrs:18,score:82,addedAt:1,summary:'连接器行业18年，自动化改造丰富，英语流利，高度契合。',dims:[{n:'行业精准度',s:92,c:'连接器行业18年全覆盖'},{n:'战略高度',s:85,c:'主导3厂自动化路线图'},{n:'英语能力',s:78,c:'外资18年'},{n:'团队管理',s:80,c:'管理30+人'}],raw:`姓名：林**\nTE Connectivity · 自动化工程总监 · 18年经验`},{id:'c10',name:'黄**',age:39,title:'自动化高级经理',co:'立讯精密',yrs:14,score:70,addedAt:2,summary:'精密连接器自动化经验充足，缺乏外资英语汇报经历。',dims:[{n:'行业精准度',s:80,c:''},{n:'战略高度',s:72,c:''},{n:'英语能力',s:52,c:'英语偏弱'},{n:'团队管理',s:75,c:''}],raw:`姓名：黄**\n立讯精密 · 自动化高级经理 · 14年经验`},{id:'c11',name:'徐**',age:48,title:'制造工程总监',co:'安费诺',yrs:22,score:60,addedAt:3,summary:'资历深厚但年龄偏大，自动化专注度不足。',dims:[{n:'行业精准度',s:75,c:''},{n:'战略高度',s:80,c:''},{n:'英语能力',s:70,c:''},{n:'团队管理',s:82,c:''}],raw:`姓名：徐**\n安费诺 · 制造工程总监 · 22年经验`}]};
 let activeJd='j1',activeC='c1',sortBy='score',drawerOpen=false,activeTab='raw';
 function sc(s){if(s>=80)return{bg:'var(--color-background-success)',tx:'var(--color-text-success)',fill:'#639922'};if(s>=65)return{bg:'var(--color-background-info)',tx:'var(--color-text-info)',fill:'#378ADD'};if(s>=50)return{bg:'var(--color-background-warning)',tx:'var(--color-text-warning)',fill:'#BA7517'};return{bg:'var(--color-background-danger)',tx:'var(--color-text-danger)',fill:'#E24B4A'};}
 function renderJdList(){document.getElementById('jd-list').innerHTML=JDS.map(j=>`<div class="jd-item${activeJd===j.id?' active':''}" onclick="selJd('${j.id}')"><div class="jd-name">${j.name}</div><div class="jd-meta">${j.co} · ${j.count}人</div></div>`).join('');}
 function renderCList(){const jd=JDS.find(j=>j.id===activeJd);document.getElementById('lp-title').textContent=jd?jd.name:'—';const list=CANDS[activeJd]||[];const scored=list.filter(c=>c.score!=null);const avg=scored.length?Math.round(scored.reduce((s,c)=>s+c.score,0)/scored.length):null;document.getElementById('lp-meta').textContent=list.length+'人'+(avg!=null?' · 均'+avg+'分':'');const sorted=[...list].sort((a,b)=>sortBy==='score'?(b.score-a.score):(a.addedAt-b.addedAt));document.getElementById('clist').innerHTML=sorted.map(c=>{const col=sc(c.score);return`<div class="ccard${activeC===c.id?' sel':''}" onclick="selC('${c.id}')"><div class="av">${c.name[0]}</div><div class="cb"><div class="ct"><span class="cn">${c.name}</span><span class="bdg" style="background:${col.bg};color:${col.tx}">${c.score}分</span></div><div class="cd">${c.co} · ${c.title}</div><div class="minibar-row">${c.dims.map(d=>`<div class="minibar"><div class="minibar-fill" style="width:${d.s}%;background:${sc(d.s).fill}"></div></div>`).join('')}</div></div></div>`;}).join('');}
-function renderDetail(){const dp=document.getElementById('detail-panel');if(!activeC){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}const list=CANDS[activeJd]||[];const c=list.find(x=>x.id===activeC);if(!c){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}const col=sc(c.score);const jdName=JDS.find(j=>j.id===activeJd)?.name||'';dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co} · ${c.title} · ${c.yrs}年经验</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row"><span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span><span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span><span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span></div></div><div class="detail-body"><div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div><div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div><div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw}</div></div></div><div class="detail-foot"><button class="btn-xs pri"><i class="ti ti-send" style="font-size:11px"></i>推进联系</button><button class="btn-xs"><i class="ti ti-refresh" style="font-size:11px"></i>重新打分</button><button class="btn-xs"><i class="ti ti-chart-bar" style="font-size:11px"></i>对比全部</button></div>`;}
-function renderDrawer(){const jd=JDS.find(j=>j.id===activeJd);document.getElementById('drawer-title').textContent=(jd?.name||'岗位')+' · 要求详情';const raw=JD_RAW[activeJd]||'';const ana=JD_ANALYSIS[activeJd];if(activeTab==='raw'){document.getElementById('drawer-body').innerHTML=`<div class="raw-jd">${raw}</div>`;}else{document.getElementById('drawer-body').innerHTML=`<div class="analysis-section"><div class="as-title">硬性门槛（缺一不可）</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div><div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div><div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc}</span></div>`).join('')}</div>`;}}
-function toggleDrawer(){drawerOpen=!drawerOpen;document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-chevron').style.transform=drawerOpen?'rotate(180deg)':'rotate(0deg)';if(drawerOpen)renderDrawer();}
+function renderDetail(){const dp=document.getElementById('detail-panel');if(!activeC){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}const list=CANDS[activeJd]||[];const c=list.find(x=>x.id===activeC);if(!c){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}const col=sc(c.score);dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co} · ${c.title} · ${c.yrs}年经验</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row"><span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span><span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span><span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span></div></div><div class="detail-body"><div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div><div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div><div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw}</div></div></div><div class="detail-foot"><button class="btn-xs pri"><i class="ti ti-send" style="font-size:11px"></i>推进联系</button><button class="btn-xs"><i class="ti ti-refresh" style="font-size:11px"></i>重新打分</button><button class="btn-xs"><i class="ti ti-chart-bar" style="font-size:11px"></i>对比全部</button></div>`;}
+function renderDrawer(){const jd=JDS.find(j=>j.id===activeJd);document.getElementById('drawer-title').textContent=(jd?.name||'岗位')+' · 岗位要求';const raw=JD_RAW[activeJd]||'';const ana=JD_ANALYSIS[activeJd];if(activeTab==='raw'){document.getElementById('drawer-body').innerHTML=`<div class="raw-jd">${raw}</div>`;}else{document.getElementById('drawer-body').innerHTML=`<div class="analysis-section"><div class="as-title">硬性门槛（缺一不可）</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div><div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div><div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc}</span></div>`).join('')}</div>`;}}
+function toggleDrawer(){drawerOpen=!drawerOpen;document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);}
 function switchTab(tab){activeTab=tab;document.getElementById('tab-raw').className='dtab'+(tab==='raw'?' on':'');document.getElementById('tab-analysis').className='dtab'+(tab==='analysis'?' on':'');renderDrawer();}
 function selJd(id){activeJd=id;activeC=null;if(drawerOpen)renderDrawer();renderJdList();renderCList();renderDetail();}
 function selC(id){activeC=id;renderCList();renderDetail();}
