@@ -307,15 +307,10 @@ function updateTopbar(){
   const ra=document.getElementById('right-area'),center=document.getElementById('center');
   if(ra.classList.contains('visible')){
     backBtn.classList.add('visible');
-    if(drawerOpen){
-      document.getElementById('back-label').textContent='候选人';
-      titleEl.textContent=JDS.find(j=>j.id===activeJd)?.name||'岗位要求';
-    }else{
-      document.getElementById('back-label').textContent='候选人';
-      titleEl.textContent=activeC?(CANDS[activeJd]||[]).find(c=>c.id===activeC)?.name||'候选人':'候选人';
-    }
+    document.getElementById('back-label').textContent='候选人';
+    titleEl.textContent='';
   }
-  else if(center.classList.contains('visible')){backBtn.classList.add('visible');document.getElementById('back-label').textContent='岗位';titleEl.textContent=JDS.find(j=>j.id===activeJd)?.name||'候选人';}
+  else if(center.classList.contains('visible')){backBtn.classList.add('visible');document.getElementById('back-label').textContent='岗位';titleEl.textContent='';}
   else{backBtn.classList.remove('visible');titleEl.textContent='猎头工作台';}
 }
 function goBack(){
