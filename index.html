@@ -152,6 +152,20 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .btn.pri{background:var(--color-background-info);border-color:transparent;color:var(--color-text-info)}
 .hint{font-size:11px;color:var(--color-text-tertiary);line-height:1.6;margin-top:4px}
 .loading-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--color-background-tertiary);z-index:200;color:var(--color-text-secondary);font-size:13px}
+.login-screen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--color-background-tertiary);z-index:250;padding:20px}
+.login-screen.show{display:flex}
+.login-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:32px 28px;width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center}
+.login-logo{width:56px;height:56px;border-radius:14px;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.login-title{font-size:18px;font-weight:600;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--color-text-tertiary);margin-bottom:24px}
+.login-field{width:100%;margin-bottom:12px}
+.login-field input{width:100%;font-size:14px;padding:11px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);box-sizing:border-box}
+.login-err{width:100%;font-size:12px;color:var(--color-text-danger);min-height:16px;margin-bottom:8px}
+.login-btn{width:100%;font-size:14px;font-weight:500;padding:11px;cursor:pointer;border-radius:var(--border-radius-md);border:none;background:var(--color-text-info);color:#fff}
+.login-btn:active{opacity:.85}
+.topbar-user{font-size:12px;color:var(--color-text-secondary);flex-shrink:0;display:flex;align-items:center;gap:5px}
+.topbar-logout{background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);padding:3px;display:flex;align-items:center;border-radius:4px}
+.topbar-logout:active{background:var(--color-background-secondary)}
 .spin{width:24px;height:24px;border:2.5px solid var(--color-border-secondary);border-top-color:var(--color-text-info);border-radius:50%;animation:sp 0.7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--color-text-primary);color:var(--color-background-primary);font-size:13px;padding:10px 18px;border-radius:var(--border-radius-md);z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
@@ -183,11 +197,23 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 </head>
 <body>
 <div class="loading-screen" id="loading"><div class="spin"></div><span>加载数据中…</span></div>
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><i class="ti ti-briefcase" style="font-size:26px;color:var(--color-text-info)"></i></div>
+    <div class="login-title">猎头工作台</div>
+    <div class="login-sub">请登录以继续</div>
+    <div class="login-field"><input id="login-user" placeholder="用户名" autocomplete="username"></div>
+    <div class="login-field"><input id="login-pass" type="password" placeholder="密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-err" id="login-err"></div>
+    <button class="login-btn" onclick="doLogin()">登 录</button>
+  </div>
+</div>
 <div class="app">
   <div class="topbar">
     <button class="topbar-back" id="back-btn" onclick="goBack()"><i class="ti ti-arrow-left" style="font-size:16px"></i><span id="back-label">返回</span></button>
     <span class="topbar-title" id="topbar-title">猎头工作台</span>
-    <span class="topbar-sub" id="topbar-sub"></span>
+    <span class="topbar-user" id="topbar-user"><i class="ti ti-user-circle" style="font-size:15px"></i><span id="topbar-username"></span></span>
+    <button class="topbar-logout" id="topbar-logout" onclick="doLogout()" title="退出登录"><i class="ti ti-logout" style="font-size:15px"></i></button>
   </div>
   <div class="body">
     <aside class="sidebar" id="sidebar">
@@ -311,9 +337,6 @@ function updateTopbar(){
   const mobile=isMobile();
   const backBtn=document.getElementById('back-btn');
   const titleEl=document.getElementById('topbar-title');
-  const subEl=document.getElementById('topbar-sub');
-  const total=JDS.reduce((s,j)=>(CANDS[j.id]||[]).length+s,0);
-  subEl.textContent=JDS.length+'个岗位 · '+total+'位候选人';
   if(!mobile){backBtn.classList.remove('visible');titleEl.textContent='猎头工作台';return;}
   const ra=document.getElementById('right-area'),center=document.getElementById('center');
   if(ra.classList.contains('visible')){
@@ -331,8 +354,6 @@ function goBack(){
   updateTopbar();
 }
 function renderJdList(){
-  const total=JDS.reduce((s,j)=>(CANDS[j.id]||[]).length+s,0);
-  document.getElementById('topbar-sub').textContent=JDS.length+'个岗位 · '+total+'位候选人';
   if(!JDS.length){document.getElementById('jd-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--color-text-tertiary);font-size:12px">还没有岗位<br>点右上角 +JD 创建</div>';return;}
   document.getElementById('jd-list').innerHTML=JDS.map(j=>{
     const list=CANDS[j.id]||[];const scored=list.filter(c=>c.score!=null);
@@ -447,7 +468,40 @@ function copyForScoring(id){
   navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude打分后把JSON填回')).catch(()=>toast('复制失败'));
 }
 
-loadData();
+/* ── 登录鉴权 ── */
+const AUTH_USER="morgan";
+const AUTH_PASS="13579x";
+const AUTH_KEY="hh_auth_v1";
+function isLoggedIn(){try{return localStorage.getItem(AUTH_KEY)===AUTH_USER;}catch(e){return false;}}
+function doLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  if(u===AUTH_USER&&p===AUTH_PASS){
+    try{localStorage.setItem(AUTH_KEY,u);}catch(e){}
+    document.getElementById('login-screen').classList.remove('show');
+    document.getElementById('topbar-username').textContent=u;
+    document.getElementById('loading').style.display='flex';
+    loadData();
+  }else{
+    document.getElementById('login-err').textContent='用户名或密码错误';
+  }
+}
+function doLogout(){
+  if(!confirm('确认退出登录？'))return;
+  try{localStorage.removeItem(AUTH_KEY);}catch(e){}
+  location.reload();
+}
+function boot(){
+  if(isLoggedIn()){
+    document.getElementById('login-screen').classList.remove('show');
+    document.getElementById('topbar-username').textContent=AUTH_USER;
+    loadData();
+  }else{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('login-screen').classList.add('show');
+  }
+}
+boot();
 window.addEventListener('resize',updateTopbar);
 </script>
 </body>
