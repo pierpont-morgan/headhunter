@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>猎头工作台</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --color-background-primary:#ffffff;--color-background-secondary:#f5f5f4;--color-background-tertiary:#eeece8;
@@ -25,19 +26,14 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);height:100dvh;overflow:hidden}
 .app{display:flex;flex-direction:column;height:100dvh}
-
-/* ── 顶部栏 ── */
 .topbar{height:52px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
 .topbar-back{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:4px 8px 4px 0;display:none;align-items:center;gap:4px;font-size:13px}
 .topbar-back.visible{display:flex}
 .topbar-title{font-size:14px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-sub{font-size:12px;color:var(--color-text-tertiary);flex-shrink:0}
 .topbar-addbtn{background:none;border:0.5px solid var(--color-border-secondary);cursor:pointer;color:var(--color-text-secondary);padding:4px 9px;display:flex;align-items:center;gap:3px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;flex-shrink:0}
-
-/* ── 主体区域（桌面：三栏；移动：单栏翻页） ── */
+.topbar-addbtn:active{background:var(--color-background-secondary)}
 .body{display:flex;flex:1;overflow:hidden}
-
-/* ── 左侧 JD 列表（桌面固定宽，移动全屏） ── */
 .sidebar{width:220px;flex-shrink:0;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
 .sidebar-head{padding:12px 12px 6px;display:flex;align-items:center;justify-content:space-between}
 .sidebar-head span{font-size:11px;color:var(--color-text-tertiary);font-weight:500;letter-spacing:.04em}
@@ -50,8 +46,6 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .jd-item-left{flex:1;min-width:0}
 .jd-name{font-size:13px;font-weight:500;line-height:1.4;color:var(--color-text-primary)}
 .jd-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
-
-/* ── 中间候选人列表 ── */
 .center{flex-shrink:0;display:flex;overflow:hidden}
 .list-panel{width:270px;flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
 .list-head{padding:12px 14px 10px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
@@ -59,17 +53,20 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .list-title{font-size:13px;font-weight:500}
 .list-meta{font-size:11px;color:var(--color-text-secondary)}
 .jd-btn{font-size:12px;padding:5px 8px 5px 10px;cursor:pointer;display:flex;align-items:center;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);white-space:nowrap;margin-top:8px;width:100%;justify-content:space-between}
-.jd-btn:hover,.jd-btn:active{background:var(--color-background-secondary)}
+.jd-btn:active{background:var(--color-background-secondary)}
 .jd-btn .left{display:flex;align-items:center;gap:5px}
 .jd-btn-arrow{font-size:15px;transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .jd-btn-arrow.open{transform:rotate(180deg)}
+.list-actions{display:flex;gap:6px;margin-top:7px}
+.list-act-btn{flex:1;font-size:11px;padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary)}
+.list-act-btn:active{background:var(--color-background-secondary)}
 .sort-row{display:flex;align-items:center;gap:6px;padding:7px 14px;flex-shrink:0}
 .sort-lbl{font-size:11px;color:var(--color-text-tertiary)}
 .sort-btn{font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);border:0.5px solid transparent;background:transparent;color:var(--color-text-secondary);cursor:pointer}
 .sort-btn.on{background:var(--color-background-primary);border-color:var(--color-border-secondary);color:var(--color-text-primary)}
 .clist{flex:1;overflow-y:auto;padding:6px 8px;-webkit-overflow-scrolling:touch}
 .ccard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px;margin-bottom:6px;cursor:pointer;display:flex;gap:9px;transition:border-color .1s}
-.ccard:hover,.ccard:active{border-color:var(--color-border-secondary)}
+.ccard:active{border-color:var(--color-border-secondary)}
 .ccard.sel{border-color:var(--color-border-info);border-width:1.5px}
 .av{width:34px;height:34px;border-radius:50%;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--color-text-info);flex-shrink:0}
 .cb{flex:1;min-width:0}
@@ -80,8 +77,6 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .minibar-row{display:flex;gap:3px;margin-top:5px}
 .minibar{flex:1;height:2px;border-radius:1px;background:var(--color-border-tertiary);overflow:hidden}
 .minibar-fill{height:100%;border-radius:1px}
-
-/* ── 右侧详情区 ── */
 .right-area{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
 .detail{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--color-background-primary)}
 .detail-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--color-text-tertiary);gap:10px}
@@ -109,18 +104,18 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .dim-bar{height:5px;border-radius:3px;background:var(--color-background-secondary);overflow:hidden;margin-bottom:3px}
 .dim-fill{height:100%;border-radius:3px}
 .dim-comment{font-size:11px;color:var(--color-text-secondary)}
-.raw-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.7;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+.raw-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto}
 .detail-foot{padding:10px 18px;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
 .btn-xs{font-size:11px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary)}
 .btn-xs:active{background:var(--color-background-secondary)}
 .btn-xs.pri{background:var(--color-background-info);border-color:transparent;color:var(--color-text-info)}
-
-/* ── JD 抽屉（从右侧滑入） ── */
+.btn-xs.danger{color:var(--color-text-danger)}
 .jd-drawer{position:absolute;top:0;right:0;bottom:0;width:100%;background:var(--color-background-primary);border-left:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;z-index:10;transform:translateX(100%);transition:transform .24s cubic-bezier(.4,0,.2,1)}
 .jd-drawer.open{transform:translateX(0)}
 .drawer-head{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.drawer-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 40px)}
-.drawer-close{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:5px;display:flex;align-items:center;border-radius:5px;flex-shrink:0}
+.drawer-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 80px)}
+.drawer-head-actions{display:flex;gap:4px;flex-shrink:0}
+.drawer-close{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:5px;display:flex;align-items:center;border-radius:5px}
 .drawer-tabs{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
 .dtab{font-size:12px;padding:9px 16px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none}
 .dtab.on{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
@@ -135,65 +130,57 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .tag.good{background:var(--color-background-success);color:var(--color-text-success)}
 .tag.co{background:var(--color-background-info);color:var(--color-text-info)}
 .warn-box{background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:8px 12px;font-size:12px;color:var(--color-text-warning);line-height:1.6;margin-top:6px}
-
-/* ══════════════════════════════
-   移动端响应式：≤768px 单栏翻页
-   ══════════════════════════════ */
+/* 弹层 */
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-mask.show{display:flex}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);width:100%;max-width:520px;max-height:85dvh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{padding:14px 18px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:14px;font-weight:500}
+.modal-body{padding:16px 18px;overflow-y:auto;flex:1}
+.modal-foot{padding:12px 18px;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:500;margin-bottom:5px;color:var(--color-text-secondary)}
+.field input,.field textarea{width:100%;font-size:13px;padding:8px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.field textarea{resize:vertical;font-family:var(--font-mono);font-size:12px;line-height:1.6}
+.btn{font-size:13px;padding:8px 16px;cursor:pointer;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary)}
+.btn:active{background:var(--color-background-secondary)}
+.btn.pri{background:var(--color-background-info);border-color:transparent;color:var(--color-text-info)}
+.hint{font-size:11px;color:var(--color-text-tertiary);line-height:1.6;margin-top:4px}
+.loading-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--color-background-tertiary);z-index:200;color:var(--color-text-secondary);font-size:13px}
+.spin{width:24px;height:24px;border:2.5px solid var(--color-border-secondary);border-top-color:var(--color-text-info);border-radius:50%;animation:sp 0.7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--color-text-primary);color:var(--color-background-primary);font-size:13px;padding:10px 18px;border-radius:var(--border-radius-md);z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
 @media(max-width:768px){
-  /* 侧边栏变全宽页面 */
-  .sidebar{
-    position:absolute;top:52px;left:0;right:0;bottom:0;
-    width:100%;border-right:none;z-index:5;
-    transform:translateX(0);transition:transform .25s cubic-bezier(.4,0,.2,1)
-  }
+  .sidebar{position:absolute;top:52px;left:0;right:0;bottom:0;width:100%;border-right:none;z-index:5;transform:translateX(0);transition:transform .25s cubic-bezier(.4,0,.2,1)}
   .sidebar.hidden{transform:translateX(-100%)}
-
-  /* 候选人列表也全宽 */
   .center{position:absolute;top:52px;left:0;right:0;bottom:0;z-index:6;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
   .center.visible{transform:translateX(0)}
   .list-panel{width:100%;border-right:none}
-
-  /* 详情区全宽，叠在候选人列表上方 */
   .right-area{position:absolute;top:52px;left:0;right:0;bottom:0;z-index:7;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
   .right-area.visible{transform:translateX(0)}
-
-  /* 顶部返回按钮 */
   .topbar-sub{display:none}
-
-  /* 详情区内 JD 抽屉占满 */
   .jd-drawer{border-left:none}
-
-  /* 加大触控目标 */
   .ccard{padding:12px 10px}
   .jd-item{padding:12px 8px}
   .btn-xs{padding:8px 12px;font-size:12px}
-  .detail-head{padding:14px 16px 12px}
-  .detail-body{padding:14px 16px}
-  .detail-foot{padding:10px 16px}
 }
 </style>
 </head>
 <body>
+<div class="loading-screen" id="loading"><div class="spin"></div><span>加载数据中…</span></div>
 <div class="app">
   <div class="topbar">
-    <button class="topbar-back" id="back-btn" onclick="goBack()">
-      <i class="ti ti-arrow-left" style="font-size:16px"></i>
-      <span id="back-label">返回</span>
-    </button>
+    <button class="topbar-back" id="back-btn" onclick="goBack()"><i class="ti ti-arrow-left" style="font-size:16px"></i><span id="back-label">返回</span></button>
     <span class="topbar-title" id="topbar-title">猎头工作台</span>
-    <span class="topbar-sub" id="topbar-sub">0 个岗位</span>
-    <button class="topbar-addbtn"><i class="ti ti-plus" style="font-size:11px"></i>JD</button>
+    <span class="topbar-sub" id="topbar-sub"></span>
+    <button class="topbar-addbtn" onclick="openJdModal()"><i class="ti ti-plus" style="font-size:11px"></i>JD</button>
   </div>
   <div class="body">
-    <!-- 第1屏：JD列表 -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head">
-        <span>岗位列表</span>
-      </div>
+      <div class="sidebar-head"><span>岗位列表</span></div>
       <div class="sidebar-list" id="jd-list"></div>
     </aside>
-
-    <!-- 第2屏：候选人列表 -->
     <div class="center" id="center">
       <div class="list-panel">
         <div class="list-head">
@@ -205,6 +192,10 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
             <span class="left"><i class="ti ti-file-description" style="font-size:13px"></i>查看岗位要求</span>
             <i class="ti ti-arrow-right jd-btn-arrow" id="jd-btn-arrow"></i>
           </button>
+          <div class="list-actions">
+            <button class="list-act-btn" onclick="openResumeModal()"><i class="ti ti-user-plus" style="font-size:12px"></i>添加简历</button>
+            <button class="list-act-btn danger" onclick="deleteCurrentJd()" style="flex:0 0 auto"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          </div>
         </div>
         <div class="sort-row">
           <span class="sort-lbl">排序：</span>
@@ -214,16 +205,15 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
         <div class="clist" id="clist"></div>
       </div>
     </div>
-
-    <!-- 第3屏：候选人详情（含JD抽屉） -->
     <div class="right-area" id="right-area">
-      <div class="detail" id="detail-panel">
-        <div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>
-      </div>
+      <div class="detail" id="detail-panel"><div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div></div>
       <div class="jd-drawer" id="jd-drawer">
         <div class="drawer-head">
           <span class="drawer-title" id="drawer-title">岗位要求</span>
-          <button class="drawer-close" onclick="toggleDrawer()"><i class="ti ti-x" style="font-size:16px"></i></button>
+          <div class="drawer-head-actions">
+            <button class="drawer-close" onclick="editCurrentJd()" title="编辑"><i class="ti ti-edit" style="font-size:15px"></i></button>
+            <button class="drawer-close" onclick="toggleDrawer()"><i class="ti ti-x" style="font-size:16px"></i></button>
+          </div>
         </div>
         <div class="drawer-tabs">
           <button class="dtab on" id="tab-raw" onclick="switchTab('raw')">客户原话</button>
@@ -234,16 +224,76 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
     </div>
   </div>
 </div>
-<script>
-const JDS=[{id:'j1',name:'高级光学设计工程师',co:'珠海·Oplink',count:4,avg:78},{id:'j2',name:'视觉算法工程师（工业AI）',co:'广州·公司5',count:4,avg:72},{id:'j3',name:'自动化总监',co:'珠海·Molex',count:3,avg:65}];
-const JD_RAW={j1:`岗位名称：高级光学工程师\n公司：珠海光联通讯技术有限公司（Oplink）\n地点：珠海保税区\n\n岗位职责：\n1. 负责WDM、光开关、环形器等无源光器件的光学设计与规格制定\n2. 开展光学仿真分析，解决产品研发过程中的光学问题\n3. 与工艺、测试团队协作，推动产品从设计到量产\n4. 在较少监督下独立完成工作\n\n任职要求：\n- 本科及以上，光学/物理或相关专业，硕士优先\n- 本科5年以上或硕士3年以上光学设计经验\n- 熟练使用Zemax等光学设计软件\n- 有光器件/光模块产品经验者优先`,j2:`岗位名称：视觉算法工程师\n公司：某工业AI公司（广州）\n\n岗位职责：\n1. 负责工业场景下3D视觉算法开发，包括点云处理、目标检测与位姿估计\n2. 针对汽车制造等场景开发机器人抓取、装配引导算法\n3. 与机器人工程师协作完成系统集成与现场调试\n\n任职要求：\n- 5年以上经验，熟悉PCL、Open3D等点云处理库\n- 有3D目标检测、点云配准（ICP等）实战经验\n- 熟练使用C++/Python，了解ROS优先`,j3:`岗位名称：自动化总监\n公司：莫仕连接器（Molex）珠海工厂\n\n岗位职责：\n1. 制定并执行连接器/线缆产品生产的自动化战略路线图\n2. 领导工程团队推动冲压、注塑、电镀、组装工序自动化落地\n3. 与全球工程/运营团队协作，对接总部汇报\n\n任职要求：\n- 15年以上制造工程经验，8年以上自动化领导经验\n- 有连接器/线缆行业自动化经验（强制要求）\n- 英语流利，能独立对接外籍管理层`};
-const JD_ANALYSIS={j1:{hardReqs:['本科5年+ / 硕士3年+','光学/物理相关专业','Zemax仿真实战经验','WDM/环形器/光开关产品经历'],plusReqs:['硕士学历','光模块系统级经验','英文读写流利'],targetCos:['腾景科技','光迅科技','华工正源','博创科技','Lumentum'],insight:`外资成熟平台，要求能独立挑担子的资深工程师，不培养新人。"在较少监督下独立完成"是文化核心。\n\n能被吸引的人：在国内小公司技术深度有限、希望在外资大平台稳定发展的资深光学工程师。`,warning:`LED/照明方向的光学工程师技术基础差异大，需谨慎；纯仿真背景无实物落地经验者不建议推进。`,dims:[{n:'产品匹配',desc:'需有WDM、环形器、交织器等无源器件完整设计经历'},{n:'仿真工具',desc:'Zemax实战项目描述，而非仅列技能'},{n:'装配工艺',desc:'能否理解并输出装配规格'},{n:'独立交付',desc:'是否有在少监督下独立完成产品全流程的案例'}]},j2:{hardReqs:['5年以上视觉算法经验','PCL/Open3D点云处理经历','3D目标检测/位姿估计实战','C++/Python熟练'],plusReqs:['ROS经验','汽车/3C行业工厂部署案例'],targetCos:['梅卡曼德','海康机器人','节卡机器人','思灵机器人'],insight:`核心诉求是能独立在工厂现场调试落地的工程师。\n\n工厂部署经历是最强加分项——会不会趴在产线上调参，比代码写得漂亮重要。`,warning:`纯学术背景慎推；2D视觉为主者不建议。`,dims:[{n:'技术栈匹配',desc:'PCL/Open3D/ICP是否有具体项目支撑'},{n:'行业场景',desc:'是否有汽车/3C工厂实际部署经历'},{n:'工程落地',desc:'算法→接口→产线集成的完整交付能力'},{n:'机器人协作',desc:'是否有与机器人工程师联调经验'}]},j3:{hardReqs:['15年以上制造工程经验','8年以上自动化领导经验','连接器/线缆行业背景（强制）','英语流利'],plusReqs:['外资背景','全球汇报经验','PFMEA/DFM工具应用'],targetCos:['TE Connectivity','安费诺','矢崎','住友电工','立讯精密'],insight:`英语+连接器+自动化高管三合一人才极稀缺，可适当放宽年龄上限至50岁。`,warning:`非连接器行业的自动化高管迁移难度大；英语弱者无论经验多深都不建议推进。`,dims:[{n:'行业精准度',desc:'连接器/线缆自动化经历的深度和年限'},{n:'战略高度',desc:'是否有自动化路线图制定、多工厂推广的管理经历'},{n:'英语能力',desc:'是否有外资团队汇报的实际经历'},{n:'团队管理',desc:'历史管理团队规模'}]}};
-const CANDS={j1:[{id:'c1',name:'刘**',age:34,title:'光学工程师',co:'腾景科技',yrs:9,score:88,addedAt:1,summary:'有WDM+环形器完整设计经历，Zemax仿真能力突出，装配工艺理解深入。综合匹配度高，建议优先推进。',dims:[{n:'产品匹配',s:92,c:'有WDM、环形器、交织器完整设计经历'},{n:'仿真工具',s:90,c:'Zemax+Matlab均有实战项目支撑'},{n:'装配工艺',s:85,c:'曾主导光器件装调工艺规范制定'},{n:'工作年限',s:80,c:'9年'}],raw:`姓名：刘**   年龄：34岁   现居：珠海\n学历：华中科技大学 光电信息工程 本科\n\n腾景科技 · 高级光学工程师（2018–至今）\n- 负责WDM、环形器等无源光器件光学设计\n- 主导产品光学规格制定，输出Zemax仿真报告\n- 牵头解决良率问题，改善良率提升18%\n\n求职意向：光学工程师 · 30-40K · 珠海/武汉`},{id:'c2',name:'陈**',age:31,title:'光学设计工程师',co:'光迅科技',yrs:6,score:74,addedAt:2,summary:'薄膜器件经验扎实，Zemax熟练，但缺少环形器方向经历。',dims:[{n:'产品匹配',s:75,c:'薄膜滤波器经验丰富，但无环形器设计记录'},{n:'仿真工具',s:82,c:'Zemax日常使用'},{n:'装配工艺',s:70,c:'有基础工艺认知'},{n:'工作年限',s:70,c:'6年'}],raw:`姓名：陈**   年龄：31岁\n光迅科技 · 光学设计工程师 · 6年经验`},{id:'c3',name:'王**',age:36,title:'光学工程师',co:'华工正源',yrs:11,score:69,addedAt:3,summary:'经验丰富，激光方向为主，向无源器件转型需适应期。',dims:[{n:'产品匹配',s:60,c:'以激光器光学设计为主'},{n:'仿真工具',s:78,c:'Zemax+Code V均有使用'},{n:'装配工艺',s:72,c:'有激光器装配经验'},{n:'工作年限',s:90,c:'11年'}],raw:`姓名：王**   年龄：36岁\n华工正源 · 高级光学工程师 · 11年经验`},{id:'c4',name:'张**',age:28,title:'光学仿真工程师',co:'博创科技',yrs:5,score:61,addedAt:4,summary:'仿真能力强但缺乏产品落地和装配经验。',dims:[{n:'产品匹配',s:55,c:'缺少实物产品设计经历'},{n:'仿真工具',s:85,c:'Zemax专项能力强'},{n:'装配工艺',s:45,c:'无装配相关经验'},{n:'工作年限',s:60,c:'5年'}],raw:`姓名：张**   年龄：28岁\n博创科技 · 光学仿真工程师 · 5年经验`}],j2:[{id:'c5',name:'周**',age:32,title:'视觉算法工程师',co:'梅卡曼德',yrs:7,score:85,addedAt:1,summary:'点云+位姿估计核心经历，汽车工厂实际部署案例，高度匹配。',dims:[{n:'技术栈匹配',s:90,c:'PCL+Open3D+ICP完整栈'},{n:'行业场景',s:88,c:'广汽/比亚迪工厂部署经历'},{n:'工程落地',s:82,c:'完整交付案例'},{n:'机器人协作',s:75,c:'有ROS联调经验'}],raw:`姓名：周**   年龄：32岁\n梅卡曼德 · 视觉算法工程师 · 7年经验`},{id:'c6',name:'吴**',age:29,title:'3D视觉算法',co:'海康机器人',yrs:5,score:77,addedAt:2,summary:'PCL+Open3D扎实，工业场景丰富。',dims:[{n:'技术栈匹配',s:82,c:''},{n:'行业场景',s:75,c:''},{n:'工程落地',s:74,c:''},{n:'机器人协作',s:68,c:''}],raw:`姓名：吴**\n海康机器人 · 3D视觉算法 · 5年经验`},{id:'c7',name:'郑**',age:35,title:'计算机视觉工程师',co:'大华股份',yrs:10,score:63,addedAt:3,summary:'2D视觉为主，3D点云经验有限。',dims:[{n:'技术栈匹配',s:55,c:''},{n:'行业场景',s:70,c:''},{n:'工程落地',s:68,c:''},{n:'机器人协作',s:52,c:''}],raw:`姓名：郑**\n大华股份 · 计算机视觉 · 10年经验`},{id:'c8',name:'赵**',age:27,title:'算法工程师',co:'速感科技',yrs:4,score:58,addedAt:4,summary:'SLAM相关经验，工业场景较少。',dims:[{n:'技术栈匹配',s:62,c:''},{n:'行业场景',s:50,c:''},{n:'工程落地',s:55,c:''},{n:'机器人协作',s:58,c:''}],raw:`姓名：赵**\n速感科技 · 算法工程师 · 4年经验`}],j3:[{id:'c9',name:'林**',age:44,title:'自动化工程总监',co:'TE Connectivity',yrs:18,score:82,addedAt:1,summary:'连接器行业18年，自动化改造丰富，英语流利，高度契合。',dims:[{n:'行业精准度',s:92,c:'连接器行业18年全覆盖'},{n:'战略高度',s:85,c:'主导3厂自动化路线图'},{n:'英语能力',s:78,c:'外资18年'},{n:'团队管理',s:80,c:'管理30+人'}],raw:`姓名：林**\nTE Connectivity · 自动化工程总监 · 18年经验`},{id:'c10',name:'黄**',age:39,title:'自动化高级经理',co:'立讯精密',yrs:14,score:70,addedAt:2,summary:'精密连接器自动化经验充足，缺乏外资英语汇报经历。',dims:[{n:'行业精准度',s:80,c:''},{n:'战略高度',s:72,c:''},{n:'英语能力',s:52,c:'英语偏弱'},{n:'团队管理',s:75,c:''}],raw:`姓名：黄**\n立讯精密 · 自动化高级经理 · 14年经验`},{id:'c11',name:'徐**',age:48,title:'制造工程总监',co:'安费诺',yrs:22,score:60,addedAt:3,summary:'资历深厚但年龄偏大，自动化专注度不足。',dims:[{n:'行业精准度',s:75,c:''},{n:'战略高度',s:80,c:''},{n:'英语能力',s:70,c:''},{n:'团队管理',s:82,c:''}],raw:`姓名：徐**\n安费诺 · 制造工程总监 · 22年经验`}]};
 
-let activeJd=null,activeC=null,sortBy='score',drawerOpen=false,activeTab='raw';
+<!-- JD 弹层 -->
+<div class="modal-mask" id="jd-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="jd-modal-title">新建岗位</span><button class="drawer-close" onclick="closeJdModal()"><i class="ti ti-x" style="font-size:18px"></i></button></div>
+    <div class="modal-body">
+      <div class="field"><label>岗位名称 *</label><input id="f-jd-name" placeholder="如：金属粉末材料研发"></div>
+      <div class="field"><label>公司 / 地点</label><input id="f-jd-co" placeholder="如：西安·某粉末制备商"></div>
+      <div class="field"><label>客户原话（原始 JD）</label><textarea id="f-jd-raw" rows="6" placeholder="粘贴客户给的原始岗位描述…"></textarea></div>
+      <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">分析内容由我（Claude）生成后给你 JSON，粘贴到这里即可。留空则"深度分析"标签显示为空。</div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeJdModal()">取消</button><button class="btn pri" onclick="saveJd()">保存</button></div>
+  </div>
+</div>
+
+<!-- 简历弹层 -->
+<div class="modal-mask" id="resume-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">添加候选人简历</span><button class="drawer-close" onclick="closeResumeModal()"><i class="ti ti-x" style="font-size:18px"></i></button></div>
+    <div class="modal-body">
+      <div class="field"><label>姓名 *</label><input id="f-c-name" placeholder="如：于**"></div>
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:1"><label>年龄</label><input id="f-c-age" type="number" placeholder="41"></div>
+        <div class="field" style="flex:1"><label>年限</label><input id="f-c-yrs" type="number" placeholder="15"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:1"><label>当前职位</label><input id="f-c-title" placeholder="技术专家"></div>
+        <div class="field" style="flex:1"><label>当前公司</label><input id="f-c-co" placeholder="东方润安集团"></div>
+      </div>
+      <div class="field"><label>原始简历 *</label><textarea id="f-c-raw" rows="7" placeholder="粘贴简历内容…"></textarea></div>
+      <div class="field"><label>评分 JSON（可选，我打分后给你）</label><textarea id="f-c-score" rows="5" placeholder='可留空，先入库后再打分。格式：{"score":68,"summary":"...","dims":[{"n":"维度","s":80,"c":"说明"}]}'></textarea><div class="hint">留空则该候选人显示为"未打分"。把简历发给我，我返回这段 JSON，粘贴即可。</div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeResumeModal()">取消</button><button class="btn pri" onclick="saveResume()">保存</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://xorifobhzlydocyckawg.supabase.co";
+const SUPABASE_KEY="sb_publishable_2KURwfnUV8ckOXuYZ3pJ0Q_SaumgsKd";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let JDS=[],CANDS={},JD_RAW={},JD_ANALYSIS={};
+let activeJd=null,activeC=null,sortBy='score',drawerOpen=false,activeTab='raw',editingJdId=null;
 const isMobile=()=>window.innerWidth<=768;
 
-function sc(s){if(s>=80)return{bg:'var(--color-background-success)',tx:'var(--color-text-success)',fill:'#639922'};if(s>=65)return{bg:'var(--color-background-info)',tx:'var(--color-text-info)',fill:'#378ADD'};if(s>=50)return{bg:'var(--color-background-warning)',tx:'var(--color-text-warning)',fill:'#BA7517'};return{bg:'var(--color-background-danger)',tx:'var(--color-text-danger)',fill:'#E24B4A'};}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function sc(s){if(s==null)return{bg:'var(--color-background-secondary)',tx:'var(--color-text-secondary)',fill:'var(--color-border-secondary)'};if(s>=80)return{bg:'var(--color-background-success)',tx:'var(--color-text-success)',fill:'#639922'};if(s>=65)return{bg:'var(--color-background-info)',tx:'var(--color-text-info)',fill:'#378ADD'};if(s>=50)return{bg:'var(--color-background-warning)',tx:'var(--color-text-warning)',fill:'#BA7517'};return{bg:'var(--color-background-danger)',tx:'var(--color-text-danger)',fill:'#E24B4A'};}
+
+async function loadData(){
+  try{
+    const {data:jds,error:e1}=await sb.from('jds').select('*').order('created_at',{ascending:true});
+    if(e1)throw e1;
+    const {data:cands,error:e2}=await sb.from('candidates').select('*').order('added_at',{ascending:true});
+    if(e2)throw e2;
+    JDS=jds.map(j=>({id:j.id,name:j.name,co:j.co||''}));
+    JD_RAW={};JD_ANALYSIS={};CANDS={};
+    jds.forEach(j=>{JD_RAW[j.id]=j.raw_jd||'';JD_ANALYSIS[j.id]=j.analysis||null;CANDS[j.id]=[];});
+    cands.forEach(c=>{
+      if(!CANDS[c.jd_id])CANDS[c.jd_id]=[];
+      CANDS[c.jd_id].push({id:c.id,name:c.name,age:c.age,title:c.title||'',co:c.co||'',yrs:c.yrs,score:c.score,summary:c.summary||'',dims:c.dims||[],raw:c.raw||'',addedAt:c.added_at});
+    });
+    document.getElementById('loading').style.display='none';
+    if(JDS.length&&!activeJd){activeJd=JDS[0].id;}
+    renderJdList();renderCList();renderDetail();updateTopbar();
+  }catch(err){
+    document.getElementById('loading').innerHTML='<span style="color:var(--color-text-danger)">加载失败：'+(err.message||err)+'</span>';
+  }
+}
 
 function updateTopbar(){
   const mobile=isMobile();
@@ -251,133 +301,126 @@ function updateTopbar(){
   const titleEl=document.getElementById('topbar-title');
   const subEl=document.getElementById('topbar-sub');
   const total=JDS.reduce((s,j)=>(CANDS[j.id]||[]).length+s,0);
-
-  if(!mobile){
-    backBtn.classList.remove('visible');
-    titleEl.textContent='猎头工作台';
-    subEl.textContent=JDS.length+'个岗位 · '+total+'位候选人';
-    return;
-  }
-  const ra=document.getElementById('right-area');
-  const center=document.getElementById('center');
-  if(ra.classList.contains('visible')){
-    backBtn.classList.add('visible');
-    document.getElementById('back-label').textContent='候选人列表';
-    titleEl.textContent=activeC?(CANDS[activeJd]||[]).find(c=>c.id===activeC)?.name||'详情':'详情';
-  } else if(center.classList.contains('visible')){
-    backBtn.classList.add('visible');
-    document.getElementById('back-label').textContent='岗位列表';
-    titleEl.textContent=JDS.find(j=>j.id===activeJd)?.name||'候选人';
-  } else {
-    backBtn.classList.remove('visible');
-    titleEl.textContent='猎头工作台';
-    subEl.textContent=JDS.length+'个岗位';
-  }
+  subEl.textContent=JDS.length+'个岗位 · '+total+'位候选人';
+  if(!mobile){backBtn.classList.remove('visible');titleEl.textContent='猎头工作台';return;}
+  const ra=document.getElementById('right-area'),center=document.getElementById('center');
+  if(ra.classList.contains('visible')){backBtn.classList.add('visible');document.getElementById('back-label').textContent='候选人';titleEl.textContent=activeC?(CANDS[activeJd]||[]).find(c=>c.id===activeC)?.name||'详情':'详情';}
+  else if(center.classList.contains('visible')){backBtn.classList.add('visible');document.getElementById('back-label').textContent='岗位';titleEl.textContent=JDS.find(j=>j.id===activeJd)?.name||'候选人';}
+  else{backBtn.classList.remove('visible');titleEl.textContent='猎头工作台';}
 }
-
 function goBack(){
-  const ra=document.getElementById('right-area');
-  const center=document.getElementById('center');
-  if(ra.classList.contains('visible')){
-    ra.classList.remove('visible');
-    if(drawerOpen){drawerOpen=false;document.getElementById('jd-drawer').classList.remove('open');document.getElementById('jd-btn-arrow').classList.remove('open');}
-  } else if(center.classList.contains('visible')){
-    center.classList.remove('visible');
-  }
+  const ra=document.getElementById('right-area'),center=document.getElementById('center');
+  if(ra.classList.contains('visible')){ra.classList.remove('visible');if(drawerOpen){drawerOpen=false;document.getElementById('jd-drawer').classList.remove('open');document.getElementById('jd-btn-arrow').classList.remove('open');}}
+  else if(center.classList.contains('visible')){center.classList.remove('visible');}
   updateTopbar();
 }
-
 function renderJdList(){
   const total=JDS.reduce((s,j)=>(CANDS[j.id]||[]).length+s,0);
   document.getElementById('topbar-sub').textContent=JDS.length+'个岗位 · '+total+'位候选人';
+  if(!JDS.length){document.getElementById('jd-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--color-text-tertiary);font-size:12px">还没有岗位<br>点右上角 +JD 创建</div>';return;}
   document.getElementById('jd-list').innerHTML=JDS.map(j=>{
-    const list=CANDS[j.id]||[];
-    const scored=list.filter(c=>c.score!=null);
+    const list=CANDS[j.id]||[];const scored=list.filter(c=>c.score!=null);
     const avg=scored.length?Math.round(scored.reduce((s,c)=>s+c.score,0)/scored.length):null;
-    return`<div class="jd-item${activeJd===j.id?' active':''}" onclick="selJd('${j.id}')">
-      <div class="jd-item-left">
-        <div class="jd-name">${j.name}</div>
-        <div class="jd-meta">${j.co} · ${list.length}人${avg!=null?' · 均'+avg+'分':''}</div>
-      </div>
-      <i class="ti ti-chevron-right" style="font-size:14px;color:var(--color-text-tertiary);flex-shrink:0"></i>
-    </div>`;
-  }).join('');}
-
+    return`<div class="jd-item${activeJd===j.id?' active':''}" onclick="selJd('${j.id}')"><div class="jd-item-left"><div class="jd-name">${j.name}</div><div class="jd-meta">${j.co?j.co+' · ':''}${list.length}人${avg!=null?' · 均'+avg+'分':''}</div></div><i class="ti ti-chevron-right" style="font-size:14px;color:var(--color-text-tertiary);flex-shrink:0"></i></div>`;
+  }).join('');
+}
 function renderCList(){
   const jd=JDS.find(j=>j.id===activeJd);
   document.getElementById('lp-title').textContent=jd?jd.name:'—';
-  const list=CANDS[activeJd]||[];
-  const scored=list.filter(c=>c.score!=null);
+  const list=CANDS[activeJd]||[];const scored=list.filter(c=>c.score!=null);
   const avg=scored.length?Math.round(scored.reduce((s,c)=>s+c.score,0)/scored.length):null;
   document.getElementById('lp-meta').textContent=list.length+'人'+(avg!=null?' · 均'+avg+'分':'');
-  const sorted=[...list].sort((a,b)=>sortBy==='score'?(b.score-a.score):(a.addedAt-b.addedAt));
+  const sorted=[...list].sort((a,b)=>sortBy==='score'?((b.score??-1)-(a.score??-1)):(new Date(a.addedAt)-new Date(b.addedAt)));
+  if(!list.length){document.getElementById('clist').innerHTML='<div style="padding:24px;text-align:center;color:var(--color-text-tertiary);font-size:12px">还没有候选人<br>点上方"添加简历"</div>';return;}
   document.getElementById('clist').innerHTML=sorted.map(c=>{
     const col=sc(c.score);
-    return`<div class="ccard${activeC===c.id?' sel':''}" onclick="selC('${c.id}')">
-      <div class="av">${c.name[0]}</div>
-      <div class="cb">
-        <div class="ct"><span class="cn">${c.name}</span><span class="bdg" style="background:${col.bg};color:${col.tx}">${c.score}分</span></div>
-        <div class="cd">${c.co} · ${c.title}</div>
-        <div class="minibar-row">${c.dims.map(d=>`<div class="minibar"><div class="minibar-fill" style="width:${d.s}%;background:${sc(d.s).fill}"></div></div>`).join('')}</div>
-      </div>
-    </div>`;
-  }).join('');}
-
+    return`<div class="ccard${activeC===c.id?' sel':''}" onclick="selC('${c.id}')"><div class="av">${c.name[0]}</div><div class="cb"><div class="ct"><span class="cn">${c.name}</span><span class="bdg" style="background:${col.bg};color:${col.tx}">${c.score!=null?c.score+'分':'未打分'}</span></div><div class="cd">${c.co}${c.title?' · '+c.title:''}</div>${c.dims&&c.dims.length?`<div class="minibar-row">${c.dims.map(d=>`<div class="minibar"><div class="minibar-fill" style="width:${d.s}%;background:${sc(d.s).fill}"></div></div>`).join('')}</div>`:''}</div></div>`;
+  }).join('');
+}
 function renderDetail(){
   const dp=document.getElementById('detail-panel');
-  if(!activeC){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}
-  const list=CANDS[activeJd]||[];
-  const c=list.find(x=>x.id===activeC);
-  if(!c){dp.innerHTML=`<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>`;return;}
+  if(!activeC){dp.innerHTML='<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>';return;}
+  const c=(CANDS[activeJd]||[]).find(x=>x.id===activeC);
+  if(!c){dp.innerHTML='<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>';return;}
   const col=sc(c.score);
-  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co} · ${c.title} · ${c.yrs}年</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row"><span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span><span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span><span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span></div></div><div class="detail-body"><div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div><div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div><div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw}</div></div></div><div class="detail-foot"><button class="btn-xs pri"><i class="ti ti-send" style="font-size:11px"></i>推进联系</button><button class="btn-xs"><i class="ti ti-refresh" style="font-size:11px"></i>重新打分</button><button class="btn-xs"><i class="ti ti-chart-bar" style="font-size:11px"></i>对比全部</button></div>`;}
-
+  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
+}
 function renderDrawer(){
   const jd=JDS.find(j=>j.id===activeJd);
   document.getElementById('drawer-title').textContent=(jd?.name||'岗位')+' · 岗位要求';
   const ana=JD_ANALYSIS[activeJd];
-  if(activeTab==='raw'){
-    document.getElementById('drawer-body').innerHTML=`<div class="raw-jd">${JD_RAW[activeJd]||''}</div>`;
-  }else{
-    document.getElementById('drawer-body').innerHTML=`<div class="analysis-section"><div class="as-title">硬性门槛（缺一不可）</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div><div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div><div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div><div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc}</span></div>`).join('')}</div>`;
+  if(activeTab==='raw'){document.getElementById('drawer-body').innerHTML=`<div class="raw-jd">${JD_RAW[activeJd]||'（未填写客户原话）'}</div>`;}
+  else{
+    if(!ana){document.getElementById('drawer-body').innerHTML='<div style="color:var(--color-text-tertiary);font-size:12px;padding:8px">暂无深度分析。点右上角编辑可补充。</div>';return;}
+    document.getElementById('drawer-body').innerHTML=`${ana.hardReqs?`<div class="analysis-section"><div class="as-title">硬性门槛</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div>`:''}${ana.plusReqs?`<div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div>`:''}${ana.targetCos?`<div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div>`:''}${ana.insight?`<div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div>`:''}${ana.warning?`<div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div>`:''}${ana.dims?`<div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc||''}</span></div>`).join('')}</div>`:''}`;
   }
 }
-
-function toggleDrawer(){
-  drawerOpen=!drawerOpen;
-  document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);
-  document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);
-  if(drawerOpen)renderDrawer();
-}
+function toggleDrawer(){drawerOpen=!drawerOpen;document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);if(drawerOpen)renderDrawer();}
 function switchTab(tab){activeTab=tab;document.getElementById('tab-raw').className='dtab'+(tab==='raw'?' on':'');document.getElementById('tab-analysis').className='dtab'+(tab==='analysis'?' on':'');renderDrawer();}
+function selJd(id){activeJd=id;activeC=null;if(drawerOpen){drawerOpen=false;document.getElementById('jd-drawer').classList.remove('open');document.getElementById('jd-btn-arrow').classList.remove('open');}renderJdList();renderCList();renderDetail();if(isMobile()){document.getElementById('center').classList.add('visible');document.getElementById('right-area').classList.remove('visible');}updateTopbar();}
+function selC(id){activeC=id;renderCList();renderDetail();if(isMobile())document.getElementById('right-area').classList.add('visible');updateTopbar();}
+function setSort(by){sortBy=by;['score','date'].forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.className='sort-btn'+(k===by?' on':'');});renderCList();}
 
-function selJd(id){
-  activeJd=id;activeC=null;
-  if(drawerOpen){drawerOpen=false;document.getElementById('jd-drawer').classList.remove('open');document.getElementById('jd-btn-arrow').classList.remove('open');}
-  renderJdList();renderCList();renderDetail();
-  if(isMobile()){
-    document.getElementById('center').classList.add('visible');
-    document.getElementById('right-area').classList.remove('visible');
-  }
-  updateTopbar();
+/* ── JD 增删改 ── */
+function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('jd-modal').classList.add('show');}
+function closeJdModal(){document.getElementById('jd-modal').classList.remove('show');}
+function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('jd-modal').classList.add('show');}
+async function saveJd(){
+  const name=document.getElementById('f-jd-name').value.trim();
+  if(!name){toast('请填岗位名称');return;}
+  const co=document.getElementById('f-jd-co').value.trim();
+  const raw=document.getElementById('f-jd-raw').value.trim();
+  const anaStr=document.getElementById('f-jd-analysis').value.trim();
+  let analysis=null;
+  if(anaStr){try{analysis=JSON.parse(anaStr);}catch(e){toast('深度分析 JSON 格式错误');return;}}
+  try{
+    if(editingJdId){
+      const {error}=await sb.from('jds').update({name,co,raw_jd:raw,analysis}).eq('id',editingJdId);
+      if(error)throw error;toast('已更新');
+    }else{
+      const id='j_'+Date.now();
+      const {error}=await sb.from('jds').insert({id,name,co,raw_jd:raw,analysis});
+      if(error)throw error;activeJd=id;toast('岗位已创建');
+    }
+    closeJdModal();await loadData();
+  }catch(err){toast('保存失败：'+(err.message||err));}
+}
+async function deleteCurrentJd(){
+  if(!activeJd)return;
+  const jd=JDS.find(j=>j.id===activeJd);
+  if(!confirm('删除岗位「'+jd.name+'」及其所有候选人？此操作不可恢复。'))return;
+  try{const {error}=await sb.from('jds').delete().eq('id',activeJd);if(error)throw error;activeJd=null;toast('已删除');await loadData();}
+  catch(err){toast('删除失败：'+(err.message||err));}
 }
 
-function selC(id){
-  activeC=id;
-  renderCList();renderDetail();
-  if(isMobile()){
-    document.getElementById('right-area').classList.add('visible');
-  }
-  updateTopbar();
+/* ── 简历增删 ── */
+function openResumeModal(){if(!activeJd){toast('请先选择岗位');return;}['name','age','yrs','title','co','raw','score'].forEach(f=>{const el=document.getElementById('f-c-'+f);if(el)el.value='';});document.getElementById('resume-modal').classList.add('show');}
+function closeResumeModal(){document.getElementById('resume-modal').classList.remove('show');}
+async function saveResume(){
+  const name=document.getElementById('f-c-name').value.trim();
+  const raw=document.getElementById('f-c-raw').value.trim();
+  if(!name||!raw){toast('姓名和简历必填');return;}
+  let score=null,summary=null,dims=null;
+  const scoreStr=document.getElementById('f-c-score').value.trim();
+  if(scoreStr){try{const o=JSON.parse(scoreStr);score=o.score??null;summary=o.summary||null;dims=o.dims||null;}catch(e){toast('评分 JSON 格式错误');return;}}
+  const rec={id:'c_'+Date.now(),jd_id:activeJd,name,age:parseInt(document.getElementById('f-c-age').value)||null,title:document.getElementById('f-c-title').value.trim(),co:document.getElementById('f-c-co').value.trim(),yrs:parseInt(document.getElementById('f-c-yrs').value)||null,score,summary,dims,raw};
+  try{const {error}=await sb.from('candidates').insert(rec);if(error)throw error;toast('候选人已添加');closeResumeModal();await loadData();}
+  catch(err){toast('保存失败：'+(err.message||err));}
+}
+async function deleteCandidate(id){
+  if(!confirm('删除该候选人？'))return;
+  try{const {error}=await sb.from('candidates').delete().eq('id',id);if(error)throw error;activeC=null;toast('已删除');await loadData();}
+  catch(err){toast('删除失败：'+(err.message||err));}
+}
+function copyForScoring(id){
+  const c=(CANDS[activeJd]||[]).find(x=>x.id===id);
+  const jd=JDS.find(j=>j.id===activeJd);
+  const txt='【岗位】'+jd.name+'\n【JD要求】\n'+(JD_RAW[activeJd]||'')+'\n\n【候选人简历】\n'+c.raw+'\n\n请按此JD对该候选人打分，返回JSON：{"score":数字,"summary":"评语","dims":[{"n":"维度","s":分数,"c":"说明"}]}';
+  navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude打分后把JSON填回')).catch(()=>toast('复制失败'));
 }
 
-function setSort(by){
-  sortBy=by;
-  ['score','date'].forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.className='sort-btn'+(k===by?' on':'');});
-  renderCList();
-}
-
-renderJdList();updateTopbar();
+loadData();
+window.addEventListener('resize',updateTopbar);
 </script>
 </body>
 </html>
