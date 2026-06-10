@@ -244,6 +244,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
       <div class="field"><label>岗位名称 *</label><input id="f-jd-name" placeholder="如：金属粉末材料研发"></div>
       <div class="field"><label>公司 / 地点</label><input id="f-jd-co" placeholder="如：西安·某粉末制备商"></div>
       <div class="field"><label>客户原话（原始 JD）</label><textarea id="f-jd-raw" rows="6" placeholder="粘贴客户给的原始岗位描述…"></textarea></div>
+      <div style="margin-bottom:14px"><button class="btn" style="width:100%;justify-content:center;display:flex;align-items:center;gap:5px" onclick="copyJdForAnalysis()"><i class="ti ti-copy" style="font-size:14px"></i>复制岗位信息（发给 Claude 做深度分析）</button><div class="hint">复制岗位名称+地点+客户原话，发给我跑 Skill1 分析，我返回 JSON 后粘到下方。</div></div>
       <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">分析内容由我（Claude）生成后给你 JSON，粘贴到这里即可。留空则"深度分析"标签显示为空。</div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeJdModal()">取消</button><button class="btn pri" onclick="saveJd()">保存</button></div>
@@ -379,6 +380,18 @@ function setSort(by){sortBy=by;['score','date'].forEach(k=>{const el=document.ge
 /* ── JD 增删改 ── */
 function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('jd-modal').classList.add('show');}
 function closeJdModal(){document.getElementById('jd-modal').classList.remove('show');}
+function copyJdForAnalysis(){
+  const name=document.getElementById('f-jd-name').value.trim();
+  const co=document.getElementById('f-jd-co').value.trim();
+  const raw=document.getElementById('f-jd-raw').value.trim();
+  if(!name&&!raw){toast('请先填岗位名称和客户原话');return;}
+  const txt='请用 Skill1（JD深度分析）分析以下岗位，并把分析结果按这个 JSON 格式返回给我（只返回JSON，方便我粘贴回系统）：\n'+
+    '{"hardReqs":["硬性门槛1","..."],"plusReqs":["加分项1","..."],"targetCos":["目标公司1","..."],"insight":"深层洞察文字","warning":"注意事项文字","dims":[{"n":"打分维度名","desc":"维度说明"}]}\n\n'+
+    '【岗位名称】'+name+'\n'+
+    '【公司/地点】'+co+'\n'+
+    '【客户原话】\n'+raw;
+  navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude分析后把JSON粘到深度分析框')).catch(()=>toast('复制失败'));
+}
 function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('jd-modal').classList.add('show');}
 async function saveJd(){
   const name=document.getElementById('f-jd-name').value.trim();
