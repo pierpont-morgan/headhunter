@@ -126,6 +126,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .dtab.on{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
 .drawer-body{flex:1;overflow-y:auto;padding:14px 16px;-webkit-overflow-scrolling:touch}
 .raw-jd{font-size:12px;line-height:1.8;color:var(--color-text-primary);white-space:pre-wrap;font-family:var(--font-mono)}
+.full-analysis{font-size:12px;line-height:1.8;color:var(--color-text-secondary);white-space:pre-wrap;font-family:var(--font-mono);background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border-left:2px solid var(--color-border-tertiary)}
 .analysis-section{margin-bottom:20px}
 .as-title{font-size:12px;font-weight:500;margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid var(--color-border-tertiary)}
 .as-body{font-size:12px;color:var(--color-text-secondary);line-height:1.7}
@@ -271,7 +272,8 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
       <div class="field"><label>公司 / 地点</label><input id="f-jd-co" placeholder="如：西安·某粉末制备商"></div>
       <div class="field"><label>客户原话（原始 JD）</label><textarea id="f-jd-raw" rows="6" placeholder="粘贴客户给的原始岗位描述…"></textarea></div>
       <div style="margin-bottom:14px"><button class="btn" style="width:100%;justify-content:center;display:flex;align-items:center;gap:5px" onclick="copyJdForAnalysis()"><i class="ti ti-copy" style="font-size:14px"></i>复制岗位信息（发给 Claude 做深度分析）</button><div class="hint">复制岗位名称+地点+客户原话，发给我跑 Skill1 分析，我返回 JSON 后粘到下方。</div></div>
-      <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">分析内容由我（Claude）生成后给你 JSON，粘贴到这里即可。留空则"深度分析"标签显示为空。</div></div>
+      <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">结构化标签数据，用于抽屉上半部分快速扫读。</div></div>
+      <div class="field"><label>完整分析正文（Skill1 输出的 Markdown 全文）</label><textarea id="f-jd-full" rows="8" placeholder="粘贴 Skill1 输出的完整深度分析（硬件条件、核心能力、目标背景、深层洞察、搜索指令单等全部内容）…"></textarea><div class="hint">完整分析原文，用于抽屉下半部分深入核对。与上方JSON一起由我生成。</div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeJdModal()">取消</button><button class="btn pri" onclick="saveJd()">保存</button></div>
   </div>
@@ -305,7 +307,7 @@ const SUPABASE_URL="https://xorifobhzlydocyckawg.supabase.co";
 const SUPABASE_KEY="sb_publishable_2KURwfnUV8ckOXuYZ3pJ0Q_SaumgsKd";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let JDS=[],CANDS={},JD_RAW={},JD_ANALYSIS={};
+let JDS=[],CANDS={},JD_RAW={},JD_ANALYSIS={},JD_FULL={};
 let activeJd=null,activeC=null,sortBy='score',drawerOpen=false,activeTab='raw',editingJdId=null;
 const isMobile=()=>window.innerWidth<=768;
 
@@ -319,8 +321,8 @@ async function loadData(){
     const {data:cands,error:e2}=await sb.from('candidates').select('*').order('added_at',{ascending:true});
     if(e2)throw e2;
     JDS=jds.map(j=>({id:j.id,name:j.name,co:j.co||''}));
-    JD_RAW={};JD_ANALYSIS={};CANDS={};
-    jds.forEach(j=>{JD_RAW[j.id]=j.raw_jd||'';JD_ANALYSIS[j.id]=j.analysis||null;CANDS[j.id]=[];});
+    JD_RAW={};JD_ANALYSIS={};JD_FULL={};CANDS={};
+    jds.forEach(j=>{JD_RAW[j.id]=j.raw_jd||'';JD_ANALYSIS[j.id]=j.analysis||null;JD_FULL[j.id]=j.analysis_full||'';CANDS[j.id]=[];});
     cands.forEach(c=>{
       if(!CANDS[c.jd_id])CANDS[c.jd_id]=[];
       CANDS[c.jd_id].push({id:c.id,name:c.name,age:c.age,title:c.title||'',co:c.co||'',yrs:c.yrs,score:c.score,summary:c.summary||'',dims:c.dims||[],raw:c.raw||'',addedAt:c.added_at});
@@ -388,8 +390,11 @@ function renderDrawer(){
   const ana=JD_ANALYSIS[activeJd];
   if(activeTab==='raw'){document.getElementById('drawer-body').innerHTML=`<div class="raw-jd">${JD_RAW[activeJd]||'（未填写客户原话）'}</div>`;}
   else{
-    if(!ana){document.getElementById('drawer-body').innerHTML='<div style="color:var(--color-text-tertiary);font-size:12px;padding:8px">暂无深度分析。点右上角编辑可补充。</div>';return;}
-    document.getElementById('drawer-body').innerHTML=`${ana.hardReqs?`<div class="analysis-section"><div class="as-title">硬性门槛</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div>`:''}${ana.plusReqs?`<div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div>`:''}${ana.targetCos?`<div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div>`:''}${ana.insight?`<div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div>`:''}${ana.warning?`<div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div>`:''}${ana.dims?`<div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc||''}</span></div>`).join('')}</div>`:''}`;
+    const full=JD_FULL[activeJd]||'';
+    const fullBlock=full?`<div class="analysis-section"><div class="as-title">完整分析正文</div><div class="full-analysis">${full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`:'';
+    if(!ana&&!full){document.getElementById('drawer-body').innerHTML='<div style="color:var(--color-text-tertiary);font-size:12px;padding:8px">暂无深度分析。点右上角编辑可补充。</div>';return;}
+    const tagBlock=ana?`${ana.hardReqs?`<div class="analysis-section"><div class="as-title">硬性门槛</div><div class="tag-row">${ana.hardReqs.map(r=>`<span class="tag must">${r}</span>`).join('')}</div></div>`:''}${ana.plusReqs?`<div class="analysis-section"><div class="as-title">加分项</div><div class="tag-row">${ana.plusReqs.map(r=>`<span class="tag good">${r}</span>`).join('')}</div></div>`:''}${ana.targetCos?`<div class="analysis-section"><div class="as-title">核心目标公司</div><div class="tag-row">${ana.targetCos.map(c=>`<span class="tag co">${c}</span>`).join('')}</div></div>`:''}${ana.insight?`<div class="analysis-section"><div class="as-title">深层洞察</div><div class="as-body">${ana.insight.replace(/\n/g,'<br>')}</div></div>`:''}${ana.warning?`<div class="analysis-section"><div class="as-title">注意事项</div><div class="warn-box">${ana.warning}</div></div>`:''}${ana.dims?`<div class="analysis-section"><div class="as-title">打分维度说明</div>${ana.dims.map(d=>`<div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500">${d.n}</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">${d.desc||''}</span></div>`).join('')}</div>`:''}`:'';
+    document.getElementById('drawer-body').innerHTML=tagBlock+fullBlock;
   }
 }
 function toggleDrawer(){drawerOpen=!drawerOpen;const ra=document.getElementById('right-area');if(isMobile()&&drawerOpen)ra.classList.add('visible');document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);if(drawerOpen)renderDrawer();updateTopbar();}
@@ -399,7 +404,7 @@ function selC(id){activeC=id;renderCList();renderDetail();if(isMobile())document
 function setSort(by){sortBy=by;['score','date'].forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.className='sort-btn'+(k===by?' on':'');});renderCList();}
 
 /* ── JD 增删改 ── */
-function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('jd-modal').classList.add('show');}
+function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('f-jd-full').value='';document.getElementById('jd-modal').classList.add('show');}
 function closeJdModal(){document.getElementById('jd-modal').classList.remove('show');}
 function copyJdForAnalysis(){
   const name=document.getElementById('f-jd-name').value.trim();
@@ -413,22 +418,23 @@ function copyJdForAnalysis(){
     '【客户原话】\n'+raw;
   navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude分析后把JSON粘到深度分析框')).catch(()=>toast('复制失败'));
 }
-function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('jd-modal').classList.add('show');}
+function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('f-jd-full').value=JD_FULL[activeJd]||'';document.getElementById('jd-modal').classList.add('show');}
 async function saveJd(){
   const name=document.getElementById('f-jd-name').value.trim();
   if(!name){toast('请填岗位名称');return;}
   const co=document.getElementById('f-jd-co').value.trim();
   const raw=document.getElementById('f-jd-raw').value.trim();
   const anaStr=document.getElementById('f-jd-analysis').value.trim();
+  const fullText=document.getElementById('f-jd-full').value.trim();
   let analysis=null;
   if(anaStr){try{analysis=JSON.parse(anaStr);}catch(e){toast('深度分析 JSON 格式错误');return;}}
   try{
     if(editingJdId){
-      const {error}=await sb.from('jds').update({name,co,raw_jd:raw,analysis}).eq('id',editingJdId);
+      const {error}=await sb.from('jds').update({name,co,raw_jd:raw,analysis,analysis_full:fullText}).eq('id',editingJdId);
       if(error)throw error;toast('已更新');
     }else{
       const id='j_'+Date.now();
-      const {error}=await sb.from('jds').insert({id,name,co,raw_jd:raw,analysis});
+      const {error}=await sb.from('jds').insert({id,name,co,raw_jd:raw,analysis,analysis_full:fullText});
       if(error)throw error;activeJd=id;toast('岗位已创建');
     }
     closeJdModal();await loadData();
