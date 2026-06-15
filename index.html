@@ -315,14 +315,7 @@ body:not(.is-admin) .del-btn{display:none !important}
     <div class="modal-head"><span class="modal-title">添加候选人简历</span><button class="drawer-close" onclick="closeResumeModal()"><i class="ti ti-x" style="font-size:18px"></i></button></div>
     <div class="modal-body">
       <div class="field"><label>姓名 *</label><input id="f-c-name" placeholder="如：于**"></div>
-      <div style="display:flex;gap:10px">
-        <div class="field" style="flex:1"><label>年龄</label><input id="f-c-age" type="number" placeholder="41"></div>
-        <div class="field" style="flex:1"><label>年限</label><input id="f-c-yrs" type="number" placeholder="15"></div>
-      </div>
-      <div style="display:flex;gap:10px">
-        <div class="field" style="flex:1"><label>当前职位</label><input id="f-c-title" placeholder="技术专家"></div>
-        <div class="field" style="flex:1"><label>当前公司</label><input id="f-c-co" placeholder="东方润安集团"></div>
-      </div>
+      <div class="field"><label>猎聘简历链接</label><div style="display:flex;gap:6px"><input id="f-c-link" placeholder="粘贴猎聘网简历链接…" style="flex:1"><button class="btn" style="flex:0 0 auto;padding:8px 12px;display:flex;align-items:center;gap:4px" onclick="copyResumeLink()"><i class="ti ti-copy" style="font-size:14px"></i>复制</button></div></div>
       <div class="field"><label>原始简历 *</label><textarea id="f-c-raw" rows="7" placeholder="粘贴简历内容…"></textarea></div>
       <div class="field"><label>评分 JSON（可选，我打分后给你）</label><textarea id="f-c-score" rows="5" placeholder='可留空，先入库后再打分。格式：{"score":68,"summary":"...","dims":[{"n":"维度","s":80,"c":"说明"}]}'></textarea><div class="hint">留空则该候选人显示为"未打分"。把简历发给我，我返回这段 JSON，粘贴即可。</div></div>
     </div>
@@ -355,7 +348,7 @@ async function loadData(){
     jds.forEach(j=>{JD_RAW[j.id]=j.raw_jd||'';JD_ANALYSIS[j.id]=j.analysis||null;JD_FULL[j.id]=j.analysis_full||'';CANDS[j.id]=[];});
     cands.forEach(c=>{
       if(!CANDS[c.jd_id])CANDS[c.jd_id]=[];
-      CANDS[c.jd_id].push({id:c.id,name:c.name,age:c.age,title:c.title||'',co:c.co||'',yrs:c.yrs,score:c.score,summary:c.summary||'',dims:c.dims||[],raw:c.raw||'',addedAt:c.added_at});
+      CANDS[c.jd_id].push({id:c.id,name:c.name,age:c.age,title:c.title||'',co:c.co||'',yrs:c.yrs,link:c.link||'',score:c.score,summary:c.summary||'',dims:c.dims||[],raw:c.raw||'',addedAt:c.added_at});
     });
     document.getElementById('loading').style.display='none';
     if(JDS.length&&!activeJd){activeJd=JDS[0].id;}
@@ -412,7 +405,7 @@ function renderDetail(){
   const c=(CANDS[activeJd]||[]).find(x=>x.id===activeC);
   if(!c){dp.innerHTML='<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>';return;}
   const col=sc(c.score);
-  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger del-btn" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
+  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}${c.link?`<a class="info-tag" href="${c.link}" target="_blank" rel="noopener" style="color:var(--color-text-info);text-decoration:none"><i class="ti ti-external-link" style="font-size:12px"></i>猎聘简历</a>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger del-btn" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
 }
 function renderDrawer(){
   const jd=JDS.find(j=>j.id===activeJd);
@@ -480,8 +473,13 @@ async function deleteCurrentJd(){
 }
 
 /* ── 简历增删 ── */
-function openResumeModal(){if(!activeJd){toast('请先选择岗位');return;}['name','age','yrs','title','co','raw','score'].forEach(f=>{const el=document.getElementById('f-c-'+f);if(el)el.value='';});document.getElementById('resume-modal').classList.add('show');}
+function openResumeModal(){if(!activeJd){toast('请先选择岗位');return;}['name','link','raw','score'].forEach(f=>{const el=document.getElementById('f-c-'+f);if(el)el.value='';});document.getElementById('resume-modal').classList.add('show');}
 function closeResumeModal(){document.getElementById('resume-modal').classList.remove('show');}
+function copyResumeLink(){
+  const link=document.getElementById('f-c-link').value.trim();
+  if(!link){toast('链接为空');return;}
+  navigator.clipboard.writeText(link).then(()=>toast('链接已复制')).catch(()=>toast('复制失败'));
+}
 async function saveResume(){
   const name=document.getElementById('f-c-name').value.trim();
   const raw=document.getElementById('f-c-raw').value.trim();
@@ -489,7 +487,7 @@ async function saveResume(){
   let score=null,summary=null,dims=null;
   const scoreStr=document.getElementById('f-c-score').value.trim();
   if(scoreStr){try{const o=JSON.parse(scoreStr);score=o.score??null;summary=o.summary||null;dims=o.dims||null;}catch(e){toast('评分 JSON 格式错误');return;}}
-  const rec={id:'c_'+Date.now(),jd_id:activeJd,name,age:parseInt(document.getElementById('f-c-age').value)||null,title:document.getElementById('f-c-title').value.trim(),co:document.getElementById('f-c-co').value.trim(),yrs:parseInt(document.getElementById('f-c-yrs').value)||null,score,summary,dims,raw};
+  const rec={id:'c_'+Date.now(),jd_id:activeJd,name,age:null,title:null,co:null,yrs:null,link:document.getElementById('f-c-link').value.trim()||null,score,summary,dims,raw};
   try{const {error}=await sb.from('candidates').insert(rec);if(error)throw error;await logNotif('add_cand','candidate',name);toast('候选人已添加');closeResumeModal();await loadData();}
   catch(err){toast('保存失败：'+(err.message||err));}
 }
