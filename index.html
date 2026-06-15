@@ -167,6 +167,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .topbar-user{font-size:12px;color:var(--color-text-secondary);flex-shrink:0;display:flex;align-items:center;gap:5px}
 .topbar-logout{background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);padding:3px;display:flex;align-items:center;border-radius:4px}
 .topbar-logout:active{background:var(--color-background-secondary)}
+body:not(.is-admin) .del-btn{display:none !important}
 .spin{width:24px;height:24px;border:2.5px solid var(--color-border-secondary);border-top-color:var(--color-text-info);border-radius:50%;animation:sp 0.7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--color-text-primary);color:var(--color-background-primary);font-size:13px;padding:10px 18px;border-radius:var(--border-radius-md);z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
@@ -249,7 +250,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
           <span class="drawer-title" id="drawer-title">岗位要求</span>
           <div class="drawer-head-actions">
             <button class="drawer-close" onclick="editCurrentJd()" title="编辑"><i class="ti ti-edit" style="font-size:15px"></i></button>
-            <button class="drawer-close" onclick="deleteCurrentJd()" title="删除岗位" style="color:var(--color-text-danger)"><i class="ti ti-trash" style="font-size:15px"></i></button>
+            <button class="drawer-close del-btn" onclick="deleteCurrentJd()" title="删除岗位" style="color:var(--color-text-danger)"><i class="ti ti-trash" style="font-size:15px"></i></button>
             <button class="drawer-close" onclick="toggleDrawer()"><i class="ti ti-x" style="font-size:16px"></i></button>
           </div>
         </div>
@@ -382,7 +383,7 @@ function renderDetail(){
   const c=(CANDS[activeJd]||[]).find(x=>x.id===activeC);
   if(!c){dp.innerHTML='<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>';return;}
   const col=sc(c.score);
-  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
+  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger del-btn" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
 }
 function renderDrawer(){
   const jd=JDS.find(j=>j.id===activeJd);
@@ -441,6 +442,7 @@ async function saveJd(){
   }catch(err){toast('保存失败：'+(err.message||err));}
 }
 async function deleteCurrentJd(){
+  if(!isAdmin()){toast('仅管理员可删除');return;}
   if(!activeJd)return;
   const jd=JDS.find(j=>j.id===activeJd);
   if(!confirm('删除岗位「'+jd.name+'」及其所有候选人？此操作不可恢复。'))return;
@@ -463,6 +465,7 @@ async function saveResume(){
   catch(err){toast('保存失败：'+(err.message||err));}
 }
 async function deleteCandidate(id){
+  if(!isAdmin()){toast('仅管理员可删除');return;}
   if(!confirm('删除该候选人？'))return;
   try{const {error}=await sb.from('candidates').delete().eq('id',id);if(error)throw error;activeC=null;toast('已删除');await loadData();}
   catch(err){toast('删除失败：'+(err.message||err));}
@@ -474,18 +477,26 @@ function copyForScoring(id){
   navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude打分后把JSON填回')).catch(()=>toast('复制失败'));
 }
 
-/* ── 登录鉴权 ── */
-const AUTH_USER="morgan";
-const AUTH_PASS="13579x";
+/* ── 登录鉴权（多账户 + 角色） ── */
+const ACCOUNTS=[
+  {user:"morgan",pass:"13579x",role:"admin"},
+  {user:"moen",pass:"xwy15618929896",role:"user"}
+];
 const AUTH_KEY="hh_auth_v1";
-function isLoggedIn(){try{return localStorage.getItem(AUTH_KEY)===AUTH_USER;}catch(e){return false;}}
+let currentRole="user";
+function findAccount(u){return ACCOUNTS.find(a=>a.user===u);}
+function isAdmin(){return currentRole==="admin";}
+function getStoredUser(){try{return localStorage.getItem(AUTH_KEY);}catch(e){return null;}}
+function applyRole(user){const acc=findAccount(user);currentRole=acc?acc.role:"user";document.body.classList.toggle('is-admin',isAdmin());document.body.classList.toggle('is-user',!isAdmin());}
 function doLogin(){
   const u=document.getElementById('login-user').value.trim();
   const p=document.getElementById('login-pass').value;
-  if(u===AUTH_USER&&p===AUTH_PASS){
+  const acc=findAccount(u);
+  if(acc&&acc.pass===p){
     try{localStorage.setItem(AUTH_KEY,u);}catch(e){}
+    applyRole(u);
     document.getElementById('login-screen').classList.remove('show');
-    document.getElementById('topbar-username').textContent=u;
+    document.getElementById('topbar-username').textContent=u+(acc.role==='admin'?'（管理员）':'');
     document.getElementById('loading').style.display='flex';
     loadData();
   }else{
@@ -498,9 +509,12 @@ function doLogout(){
   location.reload();
 }
 function boot(){
-  if(isLoggedIn()){
+  const stored=getStoredUser();
+  const acc=stored?findAccount(stored):null;
+  if(acc){
+    applyRole(stored);
     document.getElementById('login-screen').classList.remove('show');
-    document.getElementById('topbar-username').textContent=AUTH_USER;
+    document.getElementById('topbar-username').textContent=stored+(acc.role==='admin'?'（管理员）':'');
     loadData();
   }else{
     document.getElementById('loading').style.display='none';
