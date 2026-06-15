@@ -102,6 +102,10 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .section{margin-bottom:18px}
 .sec-title{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.04em;margin-bottom:8px}
 .summary-box{background:var(--color-background-secondary);padding:10px 12px;font-size:13px;line-height:1.65;border-left:2px solid var(--color-border-info)}
+.link-box{display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 12px}
+.link-url{flex:1;min-width:0;font-size:12px;color:var(--color-text-info);text-decoration:none;word-break:break-all;line-height:1.4}
+.link-copy{flex-shrink:0;background:none;border:0.5px solid var(--color-border-secondary);cursor:pointer;color:var(--color-text-secondary);padding:5px 7px;border-radius:var(--border-radius-md);display:flex;align-items:center}
+.link-copy:active{background:var(--color-background-tertiary)}
 .dim-row{margin-bottom:10px}
 .dim-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .dim-name{font-size:12px;font-weight:500}
@@ -316,7 +320,7 @@ body:not(.is-admin) .del-btn{display:none !important}
     <div class="modal-body">
       <div class="field"><label>姓名 *</label><input id="f-c-name" placeholder="如：于**"></div>
       <div class="field"><label>猎聘简历链接</label><div style="display:flex;gap:6px"><input id="f-c-link" placeholder="粘贴猎聘网简历链接…" style="flex:1"><button class="btn" style="flex:0 0 auto;padding:8px 12px;display:flex;align-items:center;gap:4px" onclick="copyResumeLink()"><i class="ti ti-copy" style="font-size:14px"></i>复制</button></div></div>
-      <div class="field"><label>原始简历 *</label><textarea id="f-c-raw" rows="7" placeholder="粘贴简历内容…"></textarea></div>
+      <div class="field"><label>原始简历</label><textarea id="f-c-raw" rows="7" placeholder="粘贴简历内容…（可留空）"></textarea></div>
       <div class="field"><label>评分 JSON（可选，我打分后给你）</label><textarea id="f-c-score" rows="5" placeholder='可留空，先入库后再打分。格式：{"score":68,"summary":"...","dims":[{"n":"维度","s":80,"c":"说明"}]}'></textarea><div class="hint">留空则该候选人显示为"未打分"。把简历发给我，我返回这段 JSON，粘贴即可。</div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeResumeModal()">取消</button><button class="btn pri" onclick="saveResume()">保存</button></div>
@@ -405,7 +409,7 @@ function renderDetail(){
   const c=(CANDS[activeJd]||[]).find(x=>x.id===activeC);
   if(!c){dp.innerHTML='<div class="detail-empty"><i class="ti ti-user"></i><p>点击候选人查看详情</p></div>';return;}
   const col=sc(c.score);
-  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}${c.link?`<a class="info-tag" href="${c.link}" target="_blank" rel="noopener" style="color:var(--color-text-info);text-decoration:none"><i class="ti ti-external-link" style="font-size:12px"></i>猎聘简历</a>`:''}</div></div><div class="detail-body">${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger del-btn" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
+  dp.innerHTML=`<div class="detail-head"><div class="dh-top"><div class="dh-av">${c.name[0]}</div><div class="dh-info"><div class="dh-name">${c.name}</div><div class="dh-sub">${c.co}${c.title?' · '+c.title:''}${c.yrs?' · '+c.yrs+'年':''}</div></div><div class="dh-score"><div class="dh-score-num" style="color:${col.tx}">${c.score!=null?c.score:'—'}</div><div class="dh-score-lbl">综合评分</div></div></div><div class="info-row">${c.age?`<span class="info-tag"><i class="ti ti-cake" style="font-size:12px"></i>${c.age}岁</span>`:''}${c.yrs?`<span class="info-tag"><i class="ti ti-clock" style="font-size:12px"></i>${c.yrs}年经验</span>`:''}${c.co?`<span class="info-tag"><i class="ti ti-building" style="font-size:12px"></i>${c.co}</span>`:''}${c.link?`<a class="info-tag" href="${c.link}" target="_blank" rel="noopener" style="color:var(--color-text-info);text-decoration:none"><i class="ti ti-external-link" style="font-size:12px"></i>猎聘简历</a>`:''}</div></div><div class="detail-body">${c.link?`<div class="section"><div class="sec-title">猎聘简历链接</div><div class="link-box"><a href="${c.link}" target="_blank" rel="noopener" class="link-url">${c.link}</a><button class="link-copy" onclick="copyText('${c.link.replace(/'/g,"\\'")}')"><i class="ti ti-copy" style="font-size:13px"></i></button></div></div>`:''}${c.summary?`<div class="section"><div class="sec-title">AI 评语</div><div class="summary-box">${c.summary}</div></div>`:''}${c.dims&&c.dims.length?`<div class="section"><div class="sec-title">维度评分</div>${c.dims.map(d=>{const dc=sc(d.s);return`<div class="dim-row"><div class="dim-top"><span class="dim-name">${d.n}</span><span class="dim-score" style="color:${dc.tx}">${d.s}分</span></div><div class="dim-bar"><div class="dim-fill" style="width:${d.s}%;background:${dc.fill}"></div></div>${d.c?`<div class="dim-comment">${d.c}</div>`:''}</div>`;}).join('')}</div>`:''}<div class="section"><div class="sec-title">原始简历</div><div class="raw-box">${c.raw||'（无）'}</div></div></div><div class="detail-foot"><button class="btn-xs pri" onclick="copyForScoring('${c.id}')"><i class="ti ti-copy" style="font-size:11px"></i>复制简历去打分</button><button class="btn-xs danger del-btn" onclick="deleteCandidate('${c.id}')"><i class="ti ti-trash" style="font-size:11px"></i>删除</button></div>`;
 }
 function renderDrawer(){
   const jd=JDS.find(j=>j.id===activeJd);
@@ -480,10 +484,11 @@ function copyResumeLink(){
   if(!link){toast('链接为空');return;}
   navigator.clipboard.writeText(link).then(()=>toast('链接已复制')).catch(()=>toast('复制失败'));
 }
+function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('已复制')).catch(()=>toast('复制失败'));}
 async function saveResume(){
   const name=document.getElementById('f-c-name').value.trim();
   const raw=document.getElementById('f-c-raw').value.trim();
-  if(!name||!raw){toast('姓名和简历必填');return;}
+  if(!name){toast('请填姓名');return;}
   let score=null,summary=null,dims=null;
   const scoreStr=document.getElementById('f-c-score').value.trim();
   if(scoreStr){try{const o=JSON.parse(scoreStr);score=o.score??null;summary=o.summary||null;dims=o.dims||null;}catch(e){toast('评分 JSON 格式错误');return;}}
