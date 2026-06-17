@@ -289,8 +289,8 @@ body:not(.is-admin) .del-btn{display:none !important}
           </div>
         </div>
         <div class="drawer-tabs">
-          <button class="dtab on" id="tab-raw" onclick="switchTab('raw')">客户原话</button>
-          <button class="dtab" id="tab-analysis" onclick="switchTab('analysis')">深度分析</button>
+          <button class="dtab on" id="tab-analysis" onclick="switchTab('analysis')">深度分析</button>
+          <button class="dtab" id="tab-raw" onclick="switchTab('raw')">客户原话</button>
         </div>
         <div class="drawer-body" id="drawer-body"></div>
       </div>
@@ -335,7 +335,7 @@ const SUPABASE_KEY="sb_publishable_2KURwfnUV8ckOXuYZ3pJ0Q_SaumgsKd";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let JDS=[],CANDS={},JD_RAW={},JD_ANALYSIS={},JD_FULL={};
-let activeJd=null,activeC=null,sortBy='score',drawerOpen=false,activeTab='raw',editingJdId=null;
+let activeJd=null,activeC=null,sortBy='score',drawerOpen=false,activeTab='analysis',editingJdId=null;
 const isMobile=()=>window.innerWidth<=768;
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
@@ -424,7 +424,7 @@ function renderDrawer(){
     document.getElementById('drawer-body').innerHTML=tagBlock+fullBlock;
   }
 }
-function toggleDrawer(){drawerOpen=!drawerOpen;const ra=document.getElementById('right-area');if(isMobile()&&drawerOpen)ra.classList.add('visible');document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);if(drawerOpen)renderDrawer();updateTopbar();}
+function toggleDrawer(){drawerOpen=!drawerOpen;const ra=document.getElementById('right-area');if(isMobile()&&drawerOpen)ra.classList.add('visible');document.getElementById('jd-drawer').classList.toggle('open',drawerOpen);document.getElementById('jd-btn-arrow').classList.toggle('open',drawerOpen);if(drawerOpen){switchTab('analysis');renderDrawer();}updateTopbar();}
 function switchTab(tab){activeTab=tab;document.getElementById('tab-raw').className='dtab'+(tab==='raw'?' on':'');document.getElementById('tab-analysis').className='dtab'+(tab==='analysis'?' on':'');renderDrawer();}
 function selJd(id){activeJd=id;activeC=null;if(drawerOpen){drawerOpen=false;document.getElementById('jd-drawer').classList.remove('open');document.getElementById('jd-btn-arrow').classList.remove('open');}renderJdList();renderCList();renderDetail();if(isMobile()){document.getElementById('center').classList.add('visible');document.getElementById('right-area').classList.remove('visible');}updateTopbar();}
 function selC(id){activeC=id;renderCList();renderDetail();if(isMobile())document.getElementById('right-area').classList.add('visible');updateTopbar();}
