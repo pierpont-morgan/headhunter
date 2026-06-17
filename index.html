@@ -307,8 +307,7 @@ body:not(.is-admin) .del-btn{display:none !important}
       <div class="field"><label>公司 / 地点</label><input id="f-jd-co" placeholder="如：西安·某粉末制备商"></div>
       <div class="field"><label>客户原话（原始 JD）</label><textarea id="f-jd-raw" rows="6" placeholder="粘贴客户给的原始岗位描述…"></textarea></div>
       <div style="margin-bottom:14px"><button class="btn" style="width:100%;justify-content:center;display:flex;align-items:center;gap:5px" onclick="copyJdForAnalysis()"><i class="ti ti-copy" style="font-size:14px"></i>复制岗位信息（发给 Claude 做深度分析）</button><div class="hint">复制岗位名称+地点+客户原话，发给我跑 Skill1 分析，我返回 JSON 后粘到下方。</div></div>
-      <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">结构化标签数据，用于抽屉上半部分快速扫读。</div></div>
-      <div class="field"><label>完整分析正文（Skill1 输出的 Markdown 全文）</label><textarea id="f-jd-full" rows="8" placeholder="粘贴 Skill1 输出的完整深度分析（硬件条件、核心能力、目标背景、深层洞察、搜索指令单等全部内容）…"></textarea><div class="hint">完整分析原文，用于抽屉下半部分深入核对。与上方JSON一起由我生成。</div></div>
+      <div class="field"><label>深度分析（Skill1 输出的结构化 JSON）</label><textarea id="f-jd-analysis" rows="6" placeholder='可留空。若填写，请粘贴 JSON 格式：{"hardReqs":[...],"plusReqs":[...],"targetCos":[...],"coreAbility":"...","targetBg":"...","insight":"...","warning":"...","dims":[{"n":"维度名","desc":"说明"}]}'></textarea><div class="hint">由我（Claude）生成后给你一份完整 JSON，粘贴到这里即可。</div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeJdModal()">取消</button><button class="btn pri" onclick="saveJd()">保存</button></div>
   </div>
@@ -432,7 +431,7 @@ function selC(id){activeC=id;renderCList();renderDetail();if(isMobile())document
 function setSort(by){sortBy=by;['score','date'].forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.className='sort-btn'+(k===by?' on':'');});renderCList();}
 
 /* ── JD 增删改 ── */
-function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('f-jd-full').value='';document.getElementById('jd-modal').classList.add('show');}
+function openJdModal(){editingJdId=null;document.getElementById('jd-modal-title').textContent='新建岗位';document.getElementById('f-jd-name').value='';document.getElementById('f-jd-co').value='';document.getElementById('f-jd-raw').value='';document.getElementById('f-jd-analysis').value='';document.getElementById('jd-modal').classList.add('show');}
 function closeJdModal(){document.getElementById('jd-modal').classList.remove('show');}
 function copyJdForAnalysis(){
   const name=document.getElementById('f-jd-name').value.trim();
@@ -446,23 +445,22 @@ function copyJdForAnalysis(){
     '【客户原话】\n'+raw;
   navigator.clipboard.writeText(txt).then(()=>toast('已复制，发给Claude分析后把JSON粘到深度分析框')).catch(()=>toast('复制失败'));
 }
-function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('f-jd-full').value=JD_FULL[activeJd]||'';document.getElementById('jd-modal').classList.add('show');}
+function editCurrentJd(){if(!activeJd)return;const jd=JDS.find(j=>j.id===activeJd);editingJdId=activeJd;document.getElementById('jd-modal-title').textContent='编辑岗位';document.getElementById('f-jd-name').value=jd.name;document.getElementById('f-jd-co').value=jd.co||'';document.getElementById('f-jd-raw').value=JD_RAW[activeJd]||'';document.getElementById('f-jd-analysis').value=JD_ANALYSIS[activeJd]?JSON.stringify(JD_ANALYSIS[activeJd],null,2):'';document.getElementById('jd-modal').classList.add('show');}
 async function saveJd(){
   const name=document.getElementById('f-jd-name').value.trim();
   if(!name){toast('请填岗位名称');return;}
   const co=document.getElementById('f-jd-co').value.trim();
   const raw=document.getElementById('f-jd-raw').value.trim();
   const anaStr=document.getElementById('f-jd-analysis').value.trim();
-  const fullText=document.getElementById('f-jd-full').value.trim();
   let analysis=null;
   if(anaStr){try{analysis=JSON.parse(anaStr);}catch(e){toast('深度分析 JSON 格式错误');return;}}
   try{
     if(editingJdId){
-      const {error}=await sb.from('jds').update({name,co,raw_jd:raw,analysis,analysis_full:fullText}).eq('id',editingJdId);
+      const {error}=await sb.from('jds').update({name,co,raw_jd:raw,analysis}).eq('id',editingJdId);
       if(error)throw error;await logNotif('edit_jd','jd',name);toast('已更新');
     }else{
       const id='j_'+Date.now();
-      const {error}=await sb.from('jds').insert({id,name,co,raw_jd:raw,analysis,analysis_full:fullText});
+      const {error}=await sb.from('jds').insert({id,name,co,raw_jd:raw,analysis});
       if(error)throw error;activeJd=id;await logNotif('add_jd','jd',name);toast('岗位已创建');
     }
     closeJdModal();await loadData();
